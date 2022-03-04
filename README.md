@@ -22,6 +22,5 @@ step 3: Run command line: npm install
 ### Run this project
 
 ```
-npm start
-
+npm run dev
 ```
