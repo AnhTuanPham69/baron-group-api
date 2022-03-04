@@ -3,8 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+<<<<<<< HEAD
     "start": "node ./src/bin/www",
     "dev": "nodemon ./src/bin/www"
+=======
+    "start": "node ./src/bin/www"
+>>>>>>> bade09349e91b69d47310705899fbbc303283e32
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -23,7 +27,6 @@
     "mongoose": "^6.2.1",
     "morgan": "~1.9.1",
     "nodemailer": "^6.7.2",
-    "nodemon": "^2.0.15",
     "os": "^0.1.2",
     "validator": "^13.7.0"
   }
