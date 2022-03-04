@@ -10,7 +10,7 @@ router.get(
 );
 
 router.get(
-    '/',tokenHandler.verifyAdminToken,
+    '/listUser',tokenHandler.verifyAdminToken,
     userController.getAll
 );
 
@@ -35,6 +35,10 @@ router.delete(
 router.post(
     '/postQuestion',
     postController.postQuestion
+);
+
+router.get('/listQuestion',
+postController.getListQuestion
 );
 
 module.exports = router;

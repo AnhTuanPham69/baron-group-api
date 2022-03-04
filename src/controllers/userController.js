@@ -104,8 +104,9 @@ exports.getAll = async (req, res) => {
 };
 
 exports.getOne = async (req, res) => {
+  const { id } = req.params;
   try {
-    docRef.doc(User_ID).get().then((data) => {
+    docRef.doc(id).get().then((data) => {
         if (data.exists) {
            const user = data.data();
            console.log('Request: '+ req.body);

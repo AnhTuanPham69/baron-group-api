@@ -2,6 +2,7 @@ const router = require('express').Router();
 
 router.use('/user', require('./userRoute'));
 router.use('/admin', require('./adminRoute'));
+router.use('/post', require('./postRoute'));
 router.use('/', (req, res) => {
     return res.json(
         {"admin route": {
