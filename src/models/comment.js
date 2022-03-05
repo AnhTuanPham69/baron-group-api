@@ -13,6 +13,9 @@ const commentShema = new mongoose.Schema({
         type: String,
         required: true
     },
+    User_Name: {
+        type: String
+    },
     Post_ID: {
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Question'
