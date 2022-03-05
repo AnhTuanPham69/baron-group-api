@@ -76,26 +76,20 @@ exports.login = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    docRef
-      .get()
-      .then((snapshot) => {
-        snapshot.forEach((doc) => {
-          console.log(doc.id, "=>", doc.data());
-          if (doc.exists) {
-            return res
-              .status(200)
-              .json({
-                message: "Getting success!",
-                list_user: { id: doc.id, profile: doc.data() },
-              });
-          } else {
-            return res.status(204).json({ message: "No such document!" });
-          }
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting document:", error);
-        return res.status(500).json({ message: error });
+    const listUser = await User.find();
+    console.log(listUser);
+    if(!listUser){
+      return res
+      .status(404)
+      .json({
+        message: "Not found User"
+      });
+    }
+      return res
+      .status(200)
+      .json({
+        message: "Getting success!",
+        list_user: listUser,
       });
   } catch (err) {
     console.log(err);
@@ -157,27 +151,56 @@ exports.delete = async (req, res) => {
 
 exports.listUserFirebase = async (req, res) => {
   try {
-    docRef
-      .get()
-      .then((snapshot) => {
-        snapshot.forEach((doc) => {
-          console.log(doc.id, "=>", doc.data());
-          if (doc.exists) {
-            return res
-              .status(200)
-              .json({
-                message: "Getting success!",
-                list_user: { id: doc.id, profile: doc.data() },
-              });
-          } else {
-            return res.status(204).json({ message: "No such document!" });
-          }
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting document:", error);
-        return res.status(500).json({ message: error });
+    const listUser = await docRef.get();
+    // console.log(listUser);
+    const list = [];
+    listUser.forEach(doc => {
+      console.log(doc.id, '=>', doc.data());
+      let id=doc.id;
+      let data = doc.data();
+      const user ={
+        _id : id,
+         _data: data
+      }
+      list.push(user);
+    });
+    if(!list){
+      return res
+      .status(404)
+      .json({
+        message: "Not have user!"
       });
+    }
+    return res
+    .status(200)
+    .json({
+      message: "Getting success!",
+      list_user: list,
+    });
+
+    // docRef
+    //   .get()
+    //   .then((snapshot) => {
+    //     snapshot.forEach((doc) => {
+          
+    //       if (doc.exists) {
+    //         const profile = {
+    //           id: doc.id,
+    //           profile: doc.data()
+    //         }
+    //         listUser = listUser.concat({profile});
+    //         console.log(profile);
+    //       } else {
+    //         return res.status(204).json({ message: "No such document!" });
+    //       }
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     console.log("Error getting document:", error);
+    //     return res.status(500).json({ message: error });
+    //   });
+
+
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: err });

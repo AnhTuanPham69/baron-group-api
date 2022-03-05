@@ -8,9 +8,9 @@ router.get(
     '/listUserFirebase',
     userController.listUserFirebase
 );
-
+//tokenHandler.verifyAdminToken,
 router.get(
-    '/listUser',tokenHandler.verifyAdminToken,
+    '/listUser',
     userController.getAll
 );
 
@@ -30,15 +30,6 @@ router.delete(
     '/:id',
     tokenHandler.verifyAdminToken,
     userController.delete
-);
-
-router.post(
-    '/postQuestion',
-    postController.postQuestion
-);
-
-router.get('/listQuestion',
-postController.getListQuestion
 );
 
 module.exports = router;
