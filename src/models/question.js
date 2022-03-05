@@ -2,6 +2,7 @@
 // Author: Tuanpham
 
 const mongoose = require('mongoose')
+const Comment = require('./comment')
 // const validator = require('validator')
 // const bcrypt = require('bcryptjs')
 
@@ -28,10 +29,17 @@ const questionShema = new mongoose.Schema({
         type: String
     },
     Date: {
-        type: String
+        type: Date
     },
     Status: {
         type: String
+    },
+    comments: [{
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Comment'
+    }],
+    like: {
+        type: Number
     }
    
 });

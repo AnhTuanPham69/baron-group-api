@@ -121,7 +121,6 @@ exports.changePassword = async (req, res) => {
         let user = await Admin.findOne({email: email});
 
         if (!user) return res.status(403).json('Email is incorrect');
-
         
         const isPasswordMatch = await bcrypt.compare(oldPw, user.password)
         if (!isPasswordMatch) {

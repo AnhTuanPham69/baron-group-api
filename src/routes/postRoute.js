@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const postController = require('../controllers/postController');
+const commentController = require('../controllers/commentController');
 
 router.post(
     '/postQuestion',
@@ -13,6 +14,16 @@ postController.getListQuestion
 
 router.get('/:id',
 postController.getQuestion
+);
+
+router.post(
+    '/:id/comment',
+    commentController.postComment
+);
+
+router.get(
+    '/:id/comment',
+    commentController.getComment
 );
 
 module.exports = router;

@@ -6,30 +6,27 @@
 
 const mongoose = require('mongoose')
 const validator = require('validator')
+const Question = require('./question')
 
 const commentShema = new mongoose.Schema({
     User_ID: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     Post_ID: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Question'
     },
     Content: {
         type: String,
         required: true
     },
-    Image: {
-        type: String
-    },
     Date: {
-        type: String
+        type: Date
     },
     Active: {
         type: String
     }
 });
 
-module.exports = mongoose.model('Comment', commentShema);
+module.exports = mongoose.model("Comment", commentShema);
