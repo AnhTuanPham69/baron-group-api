@@ -14,9 +14,9 @@ router.get(
     userController.getAll
 );
 
+//tokenHandler.verifyAdminToken,
 router.get(
     '/:id',
-    tokenHandler.verifyAdminToken,
     userController.getOne
 );
 

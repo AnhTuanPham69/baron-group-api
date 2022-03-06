@@ -11,6 +11,12 @@ const questionShema = new mongoose.Schema({
         type: String,
         required: true
     },
+    User_Name: {
+        type: String
+    },
+    Avatar: {
+        type: String
+    },
     Title: {
         type: String,
         required: true

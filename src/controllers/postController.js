@@ -16,8 +16,6 @@ exports.postQuestion = async (req, res) => {
     try {
         docRef.doc(User_ID).get().then(async (data) => {
             if (data.exists) {
-            //    const user = data.data();
-            
                const newPost = new Question({
                 User_ID: User_ID,
                 Title: req.body.Title,
@@ -55,7 +53,6 @@ exports.getListQuestion = async (req, res) => {
 exports.getQuestion = async (req, res) => {
     const { id } = req.params;
     try {
-        
         let question = await Question.findById(id).populate('comments');
         return res.status(200).json({ message: "Getting success!", "List Post": question});
 
