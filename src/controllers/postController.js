@@ -16,6 +16,10 @@ exports.postQuestion = async (req, res) => {
     try {
         docRef.doc(User_ID).get().then(async (data) => {
             if (data.exists) {
+                let username = data.data().name;
+                let avt = data.data().avatar;
+                console.log("username: "+ username);
+                console.log("avt: "+ avt);
                const newPost = new Question({
                 User_ID: User_ID,
                 Title: req.body.Title,
@@ -24,7 +28,9 @@ exports.postQuestion = async (req, res) => {
                 Subject: req.body.Subject,
                 Image: req.body.Image,
                 Status: req.body.Status,
-                Date: now
+                Date: now,
+                User_Name: username,
+                Avatar: avt
             });
                await newPost.save();
                const id = newPost._id;
