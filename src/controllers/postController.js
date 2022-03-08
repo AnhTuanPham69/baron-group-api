@@ -47,12 +47,12 @@ exports.postQuestion = async (req, res) => {
 
 exports.getListQuestion = async (req, res) => {
     try {
-        
-        let listpost = await Question.find().populate('comments');
+        let listpost = await Question.find().populate('comments').populate('likes');
         return res.status(200).json({ message: "Getting success!", "List Post": listpost});
 
     } catch(err) {
-        return res.status(500).json({ message: "Something is wrong!", err: err });
+        console.log(err);
+        return res.status(500).json({ message: "Something is wrong!"});
     }
 }
 
@@ -72,32 +72,6 @@ exports.getQuestion = async (req, res) => {
 // method: Post
 
 // root: getLike function
-
-const getlike = async (Post_ID) =>{
-    try {
-        const like = await Like.findOne({Post_ID: Post_ID});
-        console.log("sl like: "+like.li);
-        if(!like) return false;
-        
-        return like;
-    } catch (error) {
-        console.log(error);
-        if(!getLike) return false;
-    }
-}
-
-const islike = async (Post_ID, User_ID) =>{
-    try {
-        const like = await Like.findOne({Post_ID: Post_ID});
-        if (like.User_ID == User_ID){
-            return true;
-        }
-        return false;
-    } catch (error) {
-        console.log(error);
-    }
-
-}
 
 
 exports.likeQuestion = async (req, res) => {
@@ -126,12 +100,23 @@ exports.likeQuestion = async (req, res) => {
                   return res.status(200).json({ message: "Like success!", "quantityLike": sl});
                }
             } else {
-              return res.status(404).json({ message: "Invalid request. User does not exist", "quantityLike": user});
+              return res.status(404).json({ message: "Invalid request. User does not exist"});
             }
-
     } catch(err) {
         console.log(err);
         return res.status(500).json({ message: "Lost connect!" });
     }
 }
+
+exports.getLike = async (req, res) => {
+    const { id } = req.params;
+    try {
+        like = await Like.find({Post_ID: id});
+        return res.status(200).json({ message: "Quantity Like", "quantityLike": like});
+    } catch(err) {
+        console.log(err);
+        return res.status(500).json({ message: "Lost connect!" });
+    }
+}
+
 

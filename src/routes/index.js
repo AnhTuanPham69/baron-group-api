@@ -36,6 +36,8 @@ router.use('/', (req, res) => {
             result:"get Comment by in post"},
             "/:id/comment": {method:"POST",
             result:"post Comment by in post"},
+            "/:id/like": {method:"GET",
+            result:"get the number of likes of the post"},
             "/:id/like": {method:"POST",
             result:"like post <the user has liked it, it will return to dislike status>"}},
         });
