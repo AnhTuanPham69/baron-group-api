@@ -6,14 +6,16 @@ exports.getOneUser = async (id) => {
     try {
       docRef.doc(id).get().then((data) => {
           if (data.exists) {
-              return  data.data();
+            const user = data.data().name
+            console.log("username: "+ user);
+              return user;
           } else {
-              return false;
+              return 0;
           }
       });
     } catch (err) {
       console.log(err);
-      return false;
+      return 0;
     }
 }
 

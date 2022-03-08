@@ -16,6 +16,11 @@ router.get('/:id',
 postController.getQuestion
 );
 
+router.post('/:id/like',
+postController.likeQuestion
+);
+
+
 router.post(
     '/:id/comment',
     commentController.postComment
