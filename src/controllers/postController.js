@@ -47,7 +47,7 @@ exports.postQuestion = async (req, res) => {
 
 exports.getListQuestion = async (req, res) => {
     try {
-        let listpost = await Question.find().populate('comments').populate('likes');
+        let listpost = await Question.find().populate('comments');
         return res.status(200).json({ message: "Getting success!", "List Post": listpost});
 
     } catch(err) {
