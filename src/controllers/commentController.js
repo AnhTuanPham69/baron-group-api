@@ -26,7 +26,7 @@ exports.postComment = async (req, res) => {
             if (data.exists) {
                 let username = data.data().name;
                 let avt = data.data().avatar;
-                if(!avt) avt= "https://p.kindpng.com/picc/s/421-4212356_user-white-icon-png-transparent-png.png";
+                if(!avt) avt= "https://e7.pngegg.com/pngimages/722/477/png-clipart-computer-icons-user-profile-avatar-face-heroes.png";
                 console.log("User data:"+data.data().name);
                 const newComment = new Comment({
                     Post_ID: question._id,

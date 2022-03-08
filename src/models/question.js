@@ -18,8 +18,7 @@ const questionShema = new mongoose.Schema({
         type: String
     },
     Title: {
-        type: String,
-        required: true
+        type: String
     },
     Content: {
         type: String,
