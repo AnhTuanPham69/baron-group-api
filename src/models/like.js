@@ -5,16 +5,19 @@
 // Author: Tuanpham
 
 const mongoose = require('mongoose')
-const validator = require('validator')
-const Question = require('./question')
 
 const likeShema = new mongoose.Schema({
     User_ID: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     User_Name:{
         type: String
+    },
+    isLike:{
+        type: Boolean,
+        default: true
     },
     Post_ID: {
         type: mongoose.Schema.Types.ObjectId, 
@@ -24,5 +27,5 @@ const likeShema = new mongoose.Schema({
         type: Date
     }
 });
-
-module.exports = mongoose.model("Like", likeShema);
+const Like = mongoose.model("Like", likeShema);
+module.exports = Like

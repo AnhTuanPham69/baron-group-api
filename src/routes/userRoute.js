@@ -14,6 +14,21 @@ router.get(
     userController.getAll
 );
 
+router.post(
+    '/register',
+    userController.register
+);
+
+router.get(
+    '/sync',
+    userController.syncUser
+);
+
+router.post(
+    '/loginFb',
+    userController.loginFb
+);
+
 //tokenHandler.verifyAdminToken,
 router.get(
     '/:id',

@@ -5,8 +5,6 @@
 // Author: Tuanpham
 
 const mongoose = require('mongoose')
-const validator = require('validator')
-const Question = require('./question')
 
 const commentShema = new mongoose.Schema({
     User_ID: {

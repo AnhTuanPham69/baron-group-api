@@ -1,14 +1,13 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
-
-const userService = require('./service/userService');
+const Analysis = require("../models/analysis");
 
 //Firebase data
 const db = require("../config/firebaseService");
 const docRef = db.collection("users");
-
-exports.create_user = async (req, res) => {
+const now = new Date();
+exports.newUser = async (req, res) => {
   const { email, userName, phone } = req.body;
   try {
     let user = await User.findOne({ email: email });
@@ -80,14 +79,14 @@ exports.getAll = async (req, res) => {
   try {
     const listUser = await User.find();
     console.log(listUser);
-    if(!listUser){
+    if (!listUser) {
       return res
-      .status(404)
-      .json({
-        message: "Not found User"
-      });
+        .status(404)
+        .json({
+          message: "Not found User"
+        });
     }
-      return res
+    return res
       .status(200)
       .json({
         message: "Getting success!",
@@ -102,21 +101,15 @@ exports.getAll = async (req, res) => {
 exports.getOne = async (req, res) => {
   const { id } = req.params;
   try {
-    console.log("id user: "+id);
+    console.log("id user: " + id);
     docRef.doc(id).get().then((data) => {
-        if (data.exists) {
-           const user = data.data();
-            return res.status(200).json({ message: "Getting success!", user: user});
-        } else {
-            return res.status(404).json({ message: "Not found user!" });
-        }
+      if (data.exists) {
+        const user = data.data();
+        return res.status(200).json({ message: "Getting success!", user: user });
+      } else {
+        return res.status(404).json({ message: "Not found user!" });
+      }
     });
-    // user = await userService.getOneUser(id);
-    // console.log("user: "+ user);
-    // if(user === false){
-    //   return res.status(404).json({ message: "Not found user!" });
-    // }
-    // return res.status(200).json({ message: "Getting success!", user: user});
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: err });
@@ -160,30 +153,133 @@ exports.listUserFirebase = async (req, res) => {
     const listUser = await docRef.get();
     const list = [];
     listUser.forEach(doc => {
-      let id=doc.id;
+      let id = doc.id;
       let data = doc.data();
-      const user ={
-        _id : id,
-         _data: data
+      const user = {
+        _id: id,
+        _data: data
       }
       list.push(user);
     });
-    if(!list){
+    if (!list) {
       return res
-      .status(404)
-      .json({
-        message: "Not have user!"
-      });
+        .status(404)
+        .json({
+          message: "Not have user!"
+        });
     }
     return res
-    .status(200)
-    .json({
-      message: "Getting success!",
-      list_user: list,
-    });
+      .status(200)
+      .json({
+        message: "Getting success!",
+        list_user: list,
+      });
 
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: err });
   }
 };
+
+exports.syncUser = async (req, res) => {
+  try {
+    const listUser = await docRef.get();
+    try {
+      listUser.forEach(async doc => {
+        const id = doc.id;
+        let data = doc.data();
+        const user = {
+          idFirebase: id,
+          name: data.name,
+          avatar: data.avatar,
+          email: data.email,
+          role: data.role,
+          active: data.active,
+          address: data.address,
+          register_date: data.register_date
+        }
+        await User.findOneAndUpdate({ idFirebase: id }, { $set: user }, { new: true, upsert: true });
+      });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({
+          error: error
+        });
+    }
+
+    const list = await User.find();
+    return res
+      .status(200)
+      .json({
+        message: "Getting success!",
+        listUser: list
+      });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: err });
+  }
+};
+
+exports.register = (req, res) => {
+  const idUser = req.body.User_ID;
+  console.log("register function");
+  docRef.doc(idUser).get().then(async (data) => {
+    
+    let infor = data.data();
+
+    
+    const user = {
+      idFirebase: idUser,
+      name: infor.name,
+      avatar: infor.avatar,
+      email: infor.email,
+      role: infor.role,
+      active: infor.active,
+      address: infor.address,
+      register_date: infor.register_date
+    }
+    const newUser = await User.findOneAndUpdate({ idFirebase: idUser }, { $set: user }, { new: true, upsert: true });
+
+    const token = jwt.sign(
+      {
+        id: newUser._id
+      },
+      process.env.JWT_KEY
+    );
+    return res.status(201).json({
+      user: newUser,
+      token,
+    })
+  }).catch((err) => {
+    console.log(err);
+    return res.status(401).json({
+      error: "Registration failed!"
+    })
+  });
+}
+
+exports.loginFb = async (req, res) => {
+  const idUser = req.body.User_ID;
+    const newUser = await User.findOne({ idFirebase: idUser });
+    if(newUser){
+      const token = jwt.sign(
+        {
+          id: newUser._id
+        },
+        process.env.JWT_KEY
+      );
+      const anaLogin = await Analysis.findOne();
+       anaLogin.login.push(now);
+        await anaLogin.save();
+      return res.status(201).json({
+        mes: "Login is successful!",
+        user: newUser,
+        token,
+      })
+    }
+    return res.status(404).json({
+      mes: "Login failed! User does not exist",
+    })
+}

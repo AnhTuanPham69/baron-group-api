@@ -16,6 +16,14 @@ router.get('/:id',
 postController.getQuestion
 );
 
+router.put('/:id',
+postController.update
+);
+
+router.delete('/:id',
+postController.delete
+);
+
 router.post('/:id/like',
 postController.likeQuestion
 );

@@ -4,12 +4,11 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const userSchema = mongoose.Schema({
-    name: {
+    idFirebase: {
         type: String,
-        required: true,
-        trim: true
+        unique: true
     },
-    userName: {
+    name: {
         type: String,
         required: true,
         trim: true
@@ -21,19 +20,10 @@ const userSchema = mongoose.Schema({
     },
     email: {
         type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        validate: value => {
-            if (!validator.isEmail(value)) {
-                throw new Error({error: 'Invalid Email address'})
-            }
-        }
+        lowercase: true
     },
     phone: {
-        type: String,
-        required: true,
-        unique: true,
+        type: String
     },
     avatar: {
         type: String,
@@ -48,10 +38,14 @@ const userSchema = mongoose.Schema({
     status: {
         type: String,
     },
-    password: {
-        type: String,
-        required: true,
-        minLength: 7
+    checked: {
+        type: Boolean
+    },
+    address: {
+        type: String
+    },
+    register_date:{
+        type: String
     },
     tokens: [{
         token: {
@@ -60,6 +54,22 @@ const userSchema = mongoose.Schema({
         }
     }]
 })
+
+// validate: value => {
+//     if (!validator.isEmail(value)) {
+//         throw new Error({error: 'Invalid Email address'})
+//     }
+// }
+// _id : id,
+// checked: data.checked,
+// name: data.name,
+// phone: data.phone,
+// avatar: data.avatar,
+// email: data.email,
+// role: data.role,
+// active: data.active,
+// address: data.address,
+// register_date: data.register_date
 
 userSchema.pre('save', async function (next) {
     // Hash the password before saving the user model

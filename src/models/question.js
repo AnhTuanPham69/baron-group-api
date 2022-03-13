@@ -2,8 +2,8 @@
 // Author: Tuanpham
 
 const mongoose = require('mongoose')
-// const validator = require('validator')
-// const bcrypt = require('bcryptjs')
+const mongoose_delete = require('mongoose-delete');
+
 
 const questionShema = new mongoose.Schema({
     User_ID: {
@@ -42,11 +42,13 @@ const questionShema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'Comment'
     }],
-    like: [{
+    likes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Like'
     }]
    
 });
+
+questionShema.plugin(mongoose_delete, { deletedAt : true });
 
 module.exports = mongoose.model('Question', questionShema);
