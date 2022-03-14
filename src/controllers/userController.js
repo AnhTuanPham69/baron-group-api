@@ -27,8 +27,8 @@ exports.newUser = async (req, res) => {
       return res
         .status(403)
         .json("User name already registered for another account");
-
-    const newUser = new User(req.body);
+    const newTutor = req.body;
+    const newUser = new User(newTutor);
     const savedUser = await newUser.save();
     const token = jwt.sign(
       {

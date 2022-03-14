@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const postController = require('../controllers/postController');
 const commentController = require('../controllers/commentController');
+const tokenHandler = require('../middleware/tokenHander');
 
 router.post(
     '/postQuestion',
@@ -41,5 +42,22 @@ router.get(
     '/:id/comment',
     commentController.getComment
 );
+
+router.post(
+    '/:id/comment/vote',
+    commentController.voteComment
+);
+
+router.delete(
+    '/:id/comment/vote',
+    tokenHandler.verifyToken,
+    commentController.deleteVote
+);
+
+router.post(
+    '/:id/comment/getVote',
+    commentController.getVote
+);
+
 
 module.exports = router;

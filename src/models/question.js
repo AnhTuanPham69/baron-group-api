@@ -50,5 +50,5 @@ const questionShema = new mongoose.Schema({
 });
 
 questionShema.plugin(mongoose_delete, { deletedAt : true });
-
-module.exports = mongoose.model('Question', questionShema);
+const Question = mongoose.model('Question', questionShema);
+module.exports = Question;

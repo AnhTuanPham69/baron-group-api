@@ -35,12 +35,42 @@ exports.verifyAdminToken = async (req, res, next) => {
     }
 }
 
-exports.verifyToken = async (req, res, next) => {
+exports.isUser = async (req, res, next) => {
     const tokenDecoded = tokenDecode(req);
     if (tokenDecoded) {
         const admin = await Admin.findById(tokenDecoded.id);
         const user = await User.findById(tokenDecoded.id);
         if (!admin && !user) return res.status(403).json('Not allowed!');
+        req.admin = admin;
+        req.user = user;
+        next();
+    } else {
+        res.status(401).json('Unauthorized');
+    }
+}
+
+exports.isTutor = async (req, res, next) => {
+    const tokenDecoded = tokenDecode(req);
+    if (tokenDecoded) {
+        const admin = await Admin.findById(tokenDecoded.id);
+        const user = await User.findById(tokenDecoded.id);
+        if (!admin && !user) return res.status(403).json('Not allowed!');
+        if(tokenDecoded.role !== 'tutor') return res.status(403).json('Not allowed!');
+        
+        req.admin = admin;
+        req.user = user;
+        next();
+    } else {
+        res.status(401).json('Unauthorized');
+    }
+}
+
+exports.verifyToken = async (req, res, next) => {
+    const tokenDecoded = tokenDecode(req);
+    if (tokenDecoded) {
+        const admin = await Admin.findById(tokenDecoded.id);
+        const user = await User.findById(tokenDecoded.id);
+        if (!admin && !user || user._id != req.body.User_ID) return res.status(403).json('Not allowed!');
         req.admin = admin;
         req.user = user;
         next();

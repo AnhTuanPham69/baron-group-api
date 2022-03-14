@@ -129,46 +129,6 @@ exports.likeQuestion = async (req, res) => {
        const refpost = await Question.findById(id).populate('likes'); 
         length = likeList.length;
         return res.status(200).json({ message: "Quantity Like", "quantityLike": length, "listLike": likeList, post: refpost});
-
-
-        // const getLike = await Like.findOne({ idFirebase: User_ID });
-        // await Question.findByIdAndUpdate(id, {
-        //     $push: { like: getLike._id }
-        // }).exec((err, result) => {
-        //     if (err) {
-        //         return res.status(422).json({ error: err })
-        //     }
-        //     res.json(result);
-        // })
-
-        // const data = await docRef.doc(User_ID).get();
-        //     if (data.exists) {
-        //         const username = data.data().name;
-        //        const isLike = await Like.findOne({User_ID: User_ID});
-        //        if(!isLike){
-        //            const newLike = new Like({
-        //                User_ID: User_ID,
-        //                Post_ID: id,
-        //                Date: now,
-        //                User_Name: username
-        //            });
-        //            await newLike.save();
-        //            let idLike = newLike._id;
-        //            question.like = question.like.concat({idLike});
-        //            await question.save();
-        //            let sl = await Like.find({Post_ID: id});
-        //            return res.status(200).json({ message: "Like success!", "quantityLike": sl});
-        //        }else{
-        //           const dislike = isLike._id;
-        //           await Like.findByIdAndDelete(dislike);
-        //           question.like = question.like.concat(idLike);
-        //           await question.save();
-        //           let sl = await Like.find({Post_ID: id});
-        //           return res.status(200).json({ message: "Like success!", "quantityLike": sl});
-        //        }
-        //     } else {
-        //       return res.status(404).json({ message: "Invalid request. User does not exist"});
-        //     }
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Lost connect!" });

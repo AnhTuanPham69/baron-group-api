@@ -46,13 +46,7 @@ const userSchema = mongoose.Schema({
     },
     register_date:{
         type: String
-    },
-    tokens: [{
-        token: {
-            type: String,
-            required: true
-        }
-    }]
+    }
 })
 
 // validate: value => {
@@ -60,16 +54,6 @@ const userSchema = mongoose.Schema({
 //         throw new Error({error: 'Invalid Email address'})
 //     }
 // }
-// _id : id,
-// checked: data.checked,
-// name: data.name,
-// phone: data.phone,
-// avatar: data.avatar,
-// email: data.email,
-// role: data.role,
-// active: data.active,
-// address: data.address,
-// register_date: data.register_date
 
 userSchema.pre('save', async function (next) {
     // Hash the password before saving the user model

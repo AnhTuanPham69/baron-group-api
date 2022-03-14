@@ -33,7 +33,13 @@ const commentShema = new mongoose.Schema({
     },
     Image: {
         type: String
-    }
+    },
+    votes:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Vote'
+        }
+    ]
 });
-
-module.exports = mongoose.model("Comment", commentShema);
+const Comment = mongoose.model("Comment", commentShema);
+module.exports = Comment;
