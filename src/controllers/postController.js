@@ -105,10 +105,11 @@ exports.likeQuestion = async (req, res) => {
     const User_ID = req.body.User_ID;
 
     try {
-        const user = await User.findOne({ idFirebase: User_ID });
+        const user = req.user;
         const post = await Question.findById(id).populate('likes');
         if(user){
-            const like = await Like.findOne({ User_ID: user._id })
+            const like = await Like.findOne({ User_ID: user._id, Post_ID: post._id})
+            console.log("isLike: "+like);
             if(!like){
                 let newLike = new Like({
                     User_ID: user._id,
@@ -118,7 +119,7 @@ exports.likeQuestion = async (req, res) => {
                 });
                 await newLike.save();
             }else{
-                await Like.findOneAndDelete({ User_ID: user._id }, {Post_ID: post._id}); 
+                await Like.findOneAndDelete({ User_ID: user._id, Post_ID: post._id}); 
             }
         }
 
