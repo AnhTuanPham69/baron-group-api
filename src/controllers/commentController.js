@@ -9,6 +9,7 @@ const Vote = require('../models/vote');
 
 //import Firebase
 const db = require('../config/firebaseService');
+const Reply = require('../models/reply');
 
 const docRef = db.collection('users');
 
@@ -57,6 +58,7 @@ exports.getComment = async (req, res) => {
     const { id } = req.params;
     try {
         let question = await Question.findById(id).populate('comments');
+
         if (!question) {
             return res.status(404).json({ message: "This post does not exist!" });
         }
@@ -67,6 +69,64 @@ exports.getComment = async (req, res) => {
     }
 }
 
+//Reply Comment
+exports.replyComment = async (req, res) => {
+    const idComment = req.params.idCmt;
+    const idUser = req.body.User_ID;
+    const content = req.body.Content;
+        if(!content) content="no content";
+    try {
+        const comment = await Comment.findById(idComment);
+        
+        const user = await User.findOne({ idFirebase: idUser });
+        if(!user){
+            return res.status(404).json({ message: "This user does not exist!" });
+        }
+        console.log("user id: "+user._id);
+        if (!comment) {
+            return res.status(404).json({ message: "This comment does not exist!" });
+        }
+        let image = req.body.image;
+        if(!image) image = null
+        const cid = comment._id;
+        const uid = user._id;
+        console.log(user.name);
+        // content = `@${comment.User_Name}: ${content}`;
+        const newReply = {
+            User_ID: uid,
+            Comment_ID: cid,
+            Content: content,
+            Date: now,
+            Avatar: user.avatar,
+            User_Name: user.name,
+            Image: image
+        }
+        const reply = new Reply(newReply);
+        await reply.save();
+        comment.replies = comment.replies.concat(reply);
+        await comment.save();
+        const getComment = await Comment.findById(idComment).populate('replies');
+        return res.status(200).json({ message: "replying success!", "Comment": getComment });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Posting failed", error });
+    }
+}
+
+exports.getReplyComment = async (req, res) => {
+    const idComment = req.params.idCmt;
+    try {
+        const comment = await Comment.findById(idComment).populate('replies');
+ 
+        return res.status(200).json({ message: "Getting success!", "Reply Comment": comment });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Getting failed", error });
+    }
+}
+
+
+// Vote  function
 exports.voteComment = async (req, res) => {
     const idComment = req.body.idComment;
     const idUser = req.body.User_ID;
@@ -112,6 +172,17 @@ exports.getVote = async (req, res) => {
     const idComment = req.body.idComment;
     try {
         let vote = await Comment.findById(idComment).populate("votes");
+        return res.status(200).json({ message: "Voting success!", "List Vote": vote });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Something is wrong!", err });
+    }
+}
+
+exports.getOneVote = async (req, res) => {
+    const idVote = req.params.voteId;
+    try {
+        const vote = await Vote.findById(idVote);
         return res.status(200).json({ message: "Voting success!", "List Vote": vote });
     } catch (err) {
         console.log(err);

@@ -34,6 +34,12 @@ const commentShema = new mongoose.Schema({
     Image: {
         type: String
     },
+    replies: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Reply'
+        }
+    ],
     votes:[
         {
             type: mongoose.Schema.Types.ObjectId,

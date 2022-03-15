@@ -78,7 +78,6 @@ exports.login = async (req, res) => {
 exports.getAll = async (req, res) => {
   try {
     const listUser = await User.find();
-    console.log(listUser);
     if (!listUser) {
       return res
         .status(404)
@@ -101,7 +100,6 @@ exports.getAll = async (req, res) => {
 exports.getOne = async (req, res) => {
   const { id } = req.params;
   try {
-    console.log("id user: " + id);
     docRef.doc(id).get().then((data) => {
       if (data.exists) {
         const user = data.data();
@@ -224,12 +222,9 @@ exports.syncUser = async (req, res) => {
 
 exports.register = (req, res) => {
   const idUser = req.body.User_ID;
-  console.log("register function");
   docRef.doc(idUser).get().then(async (data) => {
-    
-    let infor = data.data();
 
-    
+    let infor = data.data();
     const user = {
       idFirebase: idUser,
       name: infor.name,

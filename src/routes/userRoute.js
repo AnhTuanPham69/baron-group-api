@@ -6,11 +6,13 @@ const postController = require('../controllers/postController');
 
 router.get(
     '/listUserFirebase',
+    tokenHandler.verifyAdminToken,
     userController.listUserFirebase
 );
 //tokenHandler.verifyAdminToken,
 router.get(
     '/listUser',
+    tokenHandler.verifyAdminToken,
     userController.getAll
 );
 
@@ -25,7 +27,7 @@ router.get(
 );
 
 router.post(
-    '/loginFb',
+    '/loginFirebase',
     userController.loginFb
 );
 

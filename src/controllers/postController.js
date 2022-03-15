@@ -114,12 +114,11 @@ exports.likeQuestion = async (req, res) => {
                     User_ID: user._id,
                     User_Name: user.name,
                     Post_ID: id,
-                    Date: now,
-                    isLike: true
+                    Date: now
                 });
                 await newLike.save();
             }else{
-                await Like.findOneAndDelete({ User_ID: user._id }); 
+                await Like.findOneAndDelete({ User_ID: user._id }, {Post_ID: post._id}); 
             }
         }
 

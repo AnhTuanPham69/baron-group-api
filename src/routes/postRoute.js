@@ -10,6 +10,7 @@ router.post(
 );
 
 router.get('/listQuestion',
+tokenHandler.verifyAdminToken,
 postController.getListQuestion
 );
 
@@ -22,9 +23,11 @@ postController.update
 );
 
 router.delete('/:id',
+tokenHandler.verifyToken,
 postController.delete
 );
 
+// Like Route
 router.post('/:id/like',
 postController.likeQuestion
 );
@@ -33,6 +36,7 @@ router.get('/:id/like',
 postController.getLike
 );
 
+// Comment Route
 router.post(
     '/:id/comment',
     commentController.postComment
@@ -43,9 +47,27 @@ router.get(
     commentController.getComment
 );
 
+/* reply comment */
+router.post(
+    '/:id/comment/:idCmt/reply',
+    tokenHandler.isUser,
+    commentController.replyComment
+);
+
+router.get(
+    '/:id/comment/:idCmt/reply',
+    commentController.getReplyComment
+);
+
+// Vote Route
 router.post(
     '/:id/comment/vote',
     commentController.voteComment
+);
+
+router.get(
+    '/:id/comment/:voteId',
+    commentController.getOneVote
 );
 
 router.delete(

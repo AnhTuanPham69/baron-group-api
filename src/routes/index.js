@@ -28,7 +28,7 @@ router.use('/', (req, res) => {
                     method: "GET",
                     result: "get list user from firebase"
                 },
-                "/:id":
+                "/:idFirebase":
                 {
                     method: "GET",
                     result: "Find user by id"
@@ -44,7 +44,7 @@ router.use('/', (req, res) => {
                     result: "Mỗi lần có user mới trên firebase thì gọi api này để đẩy user đó vào database và trả về token"
                 },
                 body: `User_ID: "Chuỗi id user trên firebase" `,
-                "/loginFb":
+                "/loginFirebase":
                 {
                     method: "POST",
                     result: "Mỗi lần đăng nhập sẽ kiểm tra id này có trong hệ thống hay không và trả về token",
