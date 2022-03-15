@@ -10,7 +10,7 @@ router.post(
 );
 
 router.get('/listQuestion',
-tokenHandler.verifyAdminToken,
+tokenHandler.verifyToken,
 postController.getListQuestion
 );
 
