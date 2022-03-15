@@ -6,6 +6,7 @@ const tokenHandler = require('../middleware/tokenHander');
 
 router.post(
     '/postQuestion',
+    tokenHandler.verifyToken,
     postController.postQuestion
 );
 
@@ -15,10 +16,12 @@ postController.getListQuestion
 );
 
 router.get('/:id',
+tokenHandler.verifyToken,
 postController.getQuestion
 );
 
 router.put('/:id',
+tokenHandler.verifyToken,
 postController.update
 );
 
@@ -29,21 +32,25 @@ postController.delete
 
 // Like Route
 router.post('/:id/like',
+tokenHandler.verifyToken,
 postController.likeQuestion
 );
 
 router.get('/:id/like',
+tokenHandler.verifyToken,
 postController.getLike
 );
 
 // Comment Route
 router.post(
     '/:id/comment',
+    tokenHandler.verifyToken,
     commentController.postComment
 );
 
 router.get(
     '/:id/comment',
+    tokenHandler.verifyToken,
     commentController.getComment
 );
 
@@ -56,6 +63,7 @@ router.post(
 
 router.get(
     '/:id/comment/:idCmt/reply',
+    tokenHandler.verifyToken,
     commentController.getReplyComment
 );
 
@@ -68,6 +76,7 @@ router.post(
 
 router.get(
     '/:id/comment/:voteId',
+    tokenHandler.verifyToken,
     commentController.getOneVote
 );
 
@@ -79,6 +88,7 @@ router.delete(
 
 router.get(
     '/:id/comment/:idCmt/getVote',
+    tokenHandler.verifyToken,
     commentController.getVote
 );
 
