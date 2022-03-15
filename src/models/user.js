@@ -46,7 +46,13 @@ const userSchema = mongoose.Schema({
     },
     register_date:{
         type: String
-    }
+    },
+    notifications: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Notification"
+        }
+    ],
 })
 
 // validate: value => {

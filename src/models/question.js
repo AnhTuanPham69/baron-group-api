@@ -10,6 +10,10 @@ const questionShema = new mongoose.Schema({
         type: String,
         required: true
     },
+    Type: {
+        type: String,
+        default: "public"
+    },
     User_Name: {
         type: String
     },

@@ -13,37 +13,55 @@ const Analysis = require('../models/analysis');
 
 
 //Date
-const now = new Date();
+const date = require('date-and-time');
+const Notification = require('../models/notification');
 
+const now = new Date();
+const time = date.format(now, 'HH:mm DD/MM/YYYY');
+
+exports.handleNotice = (uid, content, type) => {
+    return {
+        User_ID: uid,
+        Content: `${time}: ${content}`,
+        Date: now,
+        Type: type
+    }
+}
 exports.postQuestion = async (req, res) => {
     let User_ID = req.body.User_ID;
+    const user = req.user;
     try {
-        docRef.doc(User_ID).get().then(async (data) => {
-            if (data.exists) {
-                let username = data.data().name;
-                let avt = data.data().avatar;
-                const newPost = new Question({
-                    User_ID: User_ID,
-                    Title: req.body.Title,
-                    Content: req.body.Content,
-                    Class: req.body.Class,
-                    Subject: req.body.Subject,
-                    Image: req.body.Image,
-                    Status: req.body.Status,
-                    Date: now,
-                    User_Name: username,
-                    Avatar: avt
-                });
-                await newPost.save();
-                const id = newPost._id;
-                let question = await Question.findById(id).populate('comments');
-                return res.status(200).json({ message: "Getting success!", "List Post": question });
-            } else {
-                return res.status(404).json({ message: "Not found user!" });
-            }
+        if (!user) {
+            return res.status(404).json({ message: "User does not exist" });
+        }
+        let username = user.name;
+        let avt = user.avatar;
+        const newPost = new Question({
+            User_ID: user._id,
+            Title: req.body.Title,
+            Content: req.body.Content,
+            Class: req.body.Class,
+            Subject: req.body.Subject,
+            Image: req.body.Image,
+            Status: req.body.Status,
+            Date: now,
+            User_Name: username,
+            Avatar: avt
         });
+        await newPost.save();
+        const id = newPost._id;
+
+        // Thông báo
+        const contentNotice = "Đăng bài viết thành công";
+        const typeNotice = `post:${id}`;
+        const newNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
+        await newNotice.save();
+
+        let question = await Question.findById(id).populate('comments');
+        return res.status(200).json({ message: "Getting success!", "List Post": question });
+
     } catch (err) {
-        return res.status(500).json({ message: "Something is wrong!", err: err });
+        return res.status(500).json({ message: "Something is wrong!", err: err.messages });
     }
 }
 
@@ -71,26 +89,49 @@ exports.getQuestion = async (req, res) => {
 exports.update = async (req, res) => {
     const { id } = req.params;
     try {
-        let question = await Question.findOne({ _id: id });
-        if (!question)
+        let post = await Question.findById(id);
+        const postOwner = post.User_ID;
+        if (postOwner != req.user._id) {
+            return res.status(403).json("Not allow!");
+        }
+        if (!post)
             return res
                 .status(404)
                 .json("This post does not exist");
         await Question.findByIdAndUpdate(id, {
             $set: req.body,
         }).populate('comments');
-        question = await Question.findOne({ _id: id }).populate('comments');
-        res.status(200).json(question);
+        post = await Question.findOne({ _id: id }).populate('comments');
+
+        // Thông báo
+        const contentNotice = "Cập nhật bài viết thành công";
+        const typeNotice = `post:${id}`;
+        const newNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
+        await newNotice.save();
+
+        return res.status(200).json(post);
     } catch (err) {
         console.log(err);
-        res.status(500).json(err);
+        return res.status(500).json(err);
     }
 };
 
 exports.delete = async (req, res) => {
     try {
         const { id } = req.params;
+        const post = await Question.findById(id).populate('likes');
+        const postOwner = post.User_ID;
+        if (postOwner != req.user._id) {
+            return res.status(403).json("Not allow!");
+        }
         await Question.deleteById(id);
+
+        // Thông báo
+        const contentNotice = "Xóa bài viết thành công";
+        const typeNotice = `post:${id}`;
+        const newNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
+        await newNotice.save();
+
         return res.status(200).json("Deleted");
     } catch (err) {
         console.log(err);
@@ -103,14 +144,14 @@ exports.delete = async (req, res) => {
 exports.likeQuestion = async (req, res) => {
     const { id } = req.params;
     const User_ID = req.body.User_ID;
-
     try {
         const user = req.user;
         const post = await Question.findById(id).populate('likes');
-        if(user){
-            const like = await Like.findOne({ User_ID: user._id, Post_ID: post._id})
-            console.log("isLike: "+like);
-            if(!like){
+        const postOwner = post.User_ID;
+        if (user) {
+            const like = await Like.findOne({ User_ID: user._id, Post_ID: post._id })
+
+            if (!like) {
                 let newLike = new Like({
                     User_ID: user._id,
                     User_Name: user.name,
@@ -118,17 +159,26 @@ exports.likeQuestion = async (req, res) => {
                     Date: now
                 });
                 await newLike.save();
-            }else{
-                await Like.findOneAndDelete({ User_ID: user._id, Post_ID: post._id}); 
+                if (postOwner != user._id) {
+                    // Thông báo
+                    const contentNotice = `${user.name} đã like bài viết của bạn`;
+                    const typeNotice = `like:${id}`;
+                    const newNotice = new Notification(handleNotice(postOwner, contentNotice, typeNotice));
+                    await newNotice.save();
+
+                }
+
+            } else {
+                await Like.findOneAndDelete({ User_ID: user._id, Post_ID: post._id });
             }
         }
 
         const likeList = await Like.find({ Post_ID: id });
         post.likes = likeList;
         await post.save();
-       const refpost = await Question.findById(id).populate('likes'); 
+        const refpost = await Question.findById(id).populate('likes');
         length = likeList.length;
-        return res.status(200).json({ message: "Quantity Like", "quantityLike": length, "listLike": likeList, post: refpost});
+        return res.status(200).json({ message: "Quantity Like", "quantityLike": length, "listLike": likeList, post: refpost });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Lost connect!" });
