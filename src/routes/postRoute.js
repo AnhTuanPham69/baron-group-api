@@ -61,7 +61,8 @@ router.get(
 
 // Vote Route
 router.post(
-    '/:id/comment/vote',
+    '/:id/comment/:idCmt/vote',
+    tokenHandler.verifyToken,
     commentController.voteComment
 );
 
@@ -76,8 +77,8 @@ router.delete(
     commentController.deleteVote
 );
 
-router.post(
-    '/:id/comment/getVote',
+router.get(
+    '/:id/comment/:idCmt/getVote',
     commentController.getVote
 );
 

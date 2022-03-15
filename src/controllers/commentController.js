@@ -128,7 +128,7 @@ exports.getReplyComment = async (req, res) => {
 
 // Vote  function
 exports.voteComment = async (req, res) => {
-    const idComment = req.body.idComment;
+    const idComment = req.params.idCmt;
     const idUser = req.body.User_ID;
     const star = req.body.star;
     try {
@@ -169,7 +169,7 @@ exports.voteComment = async (req, res) => {
 }
 
 exports.getVote = async (req, res) => {
-    const idComment = req.body.idComment;
+    const idComment = req.params.idCmt;
     try {
         let vote = await Comment.findById(idComment).populate("votes");
         return res.status(200).json({ message: "Voting success!", "List Vote": vote });

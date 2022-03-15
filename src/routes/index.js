@@ -41,9 +41,10 @@ router.use('/', (req, res) => {
                 "/register":
                 {
                     method: "POST",
-                    result: "Mỗi lần có user mới trên firebase thì gọi api này để đẩy user đó vào database và trả về token"
+                    result: "Mỗi lần có user mới trên firebase thì gọi api này để đẩy user đó vào database và trả về token",
+                    body: `User_ID: "Chuỗi id user trên firebase" `,
                 },
-                body: `User_ID: "Chuỗi id user trên firebase" `,
+                
                 "/loginFirebase":
                 {
                     method: "POST",
@@ -87,26 +88,35 @@ router.use('/', (req, res) => {
                 "/:id/like": {
                     method: "POST",
                     result: "like post <the user has liked it, it will return to dislike status>"
-                }
-            },
-            "/post/": {
-                "/:id/comment/vote": {
+                },
+                "/:id/comment/:idCmt/vote": {
                     method: "POST",
                     result: "Vote comment 0-5 sao",
                     body: ` const idComment = req.body.idComment;
                             const idUser = req.body.User_ID;
                             const star = req.body.star;`
                 },
-                "/:id/comment/vote": {
+                "/:id/comment/:idCmt/vote": {
                     method: "DELETE",
                     result: "Xóa bình chọn",
-                    body: ` const idComment = req.body.idComment;
-                            const user = req.body.User_ID;`
                 },
-                "/:id/comment/getVote": {
+                "/:id/comment/:idCmt/getVote": {
                     method: "GET",
-                    result: "Lấy danh sách bình chọn của comment đó sau đó lấy tổng số sao chia cho tổng lượng vote",
-                    body: ` const idComment = req.body.idComment;`
+                    result: "Lấy danh sách bình chọn của comment đó sau đó lấy tổng số sao chia cho tổng lượng vote"
+                },
+                "/:id/comment/:idCmt/reply": {
+                    method: "GET",
+                    result: "Reply comment",
+                    exUrl: "localhost:5000/api/post/622d97ee8cd856ec95ddf2e2/comment/622e44336ff3d35050dc1872/reply",
+                },
+                "/:id/comment/:idCmt/reply": {
+                    method: "POST",
+                    result: "Reply comment",
+                    exUrl: "localhost:5000/api/post/622d97ee8cd856ec95ddf2e2/comment/622e44336ff3d35050dc1872/reply",
+                    header: "Authorization: Bearer token",
+                    body: `{
+                        "Content": "Quân Reply comment",
+                    }`
                 }
             }
         });

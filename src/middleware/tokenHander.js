@@ -55,7 +55,7 @@ exports.isTutor = async (req, res, next) => {
         const admin = await Admin.findById(tokenDecoded.id);
         const user = await User.findById(tokenDecoded.id);
         if (!admin && !user) return res.status(403).json('Not allowed!');
-        if(tokenDecoded.role !== 'tutor') return res.status(403).json('Not allowed!');
+        if(user.role !== 'tutor') return res.status(403).json('Not allowed!');
         
         req.admin = admin;
         req.user = user;
@@ -70,7 +70,7 @@ exports.verifyToken = async (req, res, next) => {
     if (tokenDecoded) {
         const admin = await Admin.findById(tokenDecoded.id);
         const user = await User.findById(tokenDecoded.id);
-        if (!admin && !user || user._id != req.body.User_ID) return res.status(403).json('Not allowed!');
+        if (!admin && !user ) return res.status(403).json('Not allowed!');
         req.admin = admin;
         req.user = user;
         next();
