@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const notificationShema = new mongoose.Schema({
     User_ID: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "User"
     },
@@ -10,9 +10,12 @@ const notificationShema = new mongoose.Schema({
         type: String,
         required: true
     },
-    Type: {
-        type: String,
-        required: true
+    Url: {
+        type: String
+    },
+    Readed:{
+        type: Boolean,
+        default: false
     },
     Date: {
         type: Date

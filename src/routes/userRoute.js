@@ -23,6 +23,7 @@ router.post(
 
 router.get(
     '/sync',
+    tokenHandler.verifyAdminToken,
     userController.syncUser
 );
 
@@ -33,13 +34,14 @@ router.post(
 
 //tokenHandler.verifyAdminToken,
 router.get(
-    '/:id',
+    '/',
+    tokenHandler.verifyToken,
     userController.getOne
 );
 
 router.put(
     '/:id',
-    tokenHandler.verifyAdminToken,
+    tokenHandler.verifyToken,
     userController.update
 );
 

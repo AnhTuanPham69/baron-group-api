@@ -16,17 +16,7 @@ exports.postBook = async (req, res) => {
         if(!user){
             return res.status(500).json({ message: "User không được cung cấp"});
         }
-        const book = {
-            User_ID: user._id,
-            UserName: user.name,
-            Avatar: user.avatar,
-            Name: req.body.bookname,
-            Phone: req.body.phone,
-            Content: req.body.content,
-            Price: req.body.price,
-            Date: now,
-            Image: req.body.image
-        }
+        const book = req.body;
         const newBook = new Book(book);
         await newBook.save();
         

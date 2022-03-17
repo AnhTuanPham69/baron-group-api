@@ -15,18 +15,12 @@ const Analysis = require('../models/analysis');
 //Date
 const date = require('date-and-time');
 const Notification = require('../models/notification');
+const { handleNotice } = require('./notificationController');
 
 const now = new Date();
 const time = date.format(now, 'HH:mm DD/MM/YYYY');
 
-exports.handleNotice = (uid, content, type) => {
-    return {
-        User_ID: uid,
-        Content: `${time}: ${content}`,
-        Date: now,
-        Type: type
-    }
-}
+
 exports.postQuestion = async (req, res) => {
     let User_ID = req.body.User_ID;
     const user = req.user;
@@ -53,10 +47,11 @@ exports.postQuestion = async (req, res) => {
 
         // Thông báo
         const contentNotice = "Đăng bài viết thành công";
-        const typeNotice = `post:${id}`;
+        const typeNotice = `/post/${id}`;
         const newNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
         await newNotice.save();
-
+        user.notifications = user.notifications.concat(newNotice);
+        await user.save();
         let question = await Question.findById(id).populate('comments');
         return res.status(200).json({ message: "Getting success!", "List Post": question });
 
@@ -105,9 +100,11 @@ exports.update = async (req, res) => {
 
         // Thông báo
         const contentNotice = "Cập nhật bài viết thành công";
-        const typeNotice = `post:${id}`;
+        const typeNotice = `post/${id}`;
         const newNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
         await newNotice.save();
+        user.notifications = user.notifications.concat(newNotice);
+        await user.save();
 
         return res.status(200).json(post);
     } catch (err) {
@@ -128,9 +125,11 @@ exports.delete = async (req, res) => {
 
         // Thông báo
         const contentNotice = "Xóa bài viết thành công";
-        const typeNotice = `post:${id}`;
+        const typeNotice = `post:deleted`;
         const newNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
         await newNotice.save();
+        user.notifications = user.notifications.concat(newNotice);
+        await user.save();
 
         return res.status(200).json("Deleted");
     } catch (err) {
@@ -165,7 +164,6 @@ exports.likeQuestion = async (req, res) => {
                     const typeNotice = `like:${id}`;
                     const newNotice = new Notification(handleNotice(postOwner, contentNotice, typeNotice));
                     await newNotice.save();
-
                 }
 
             } else {

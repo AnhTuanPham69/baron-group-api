@@ -1,8 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const tokenHandler = require('../middleware/tokenHander');
-const bookController = require('../controllers/bookController');
-
 
 
 const document = async (req, res) => {
@@ -64,13 +61,54 @@ const document = async (req, res) => {
                     method: "POST",
                     result: "Đăng sách",
                     header: "Authorization: Bearer {token của user}",
-                    body: {
-                        "bookname": "Cửa sổ tâm hồn",
-                        "phone": "0799101759",
-                        "content": "Em muốn bán sách này ai quan tâm không ạ",
-                        "price": "100000",
-                        "image": "http://300b5338.vws.vegacdn.vn/image/img.news/0/0/0/492.jpg?v=1&w=600&h=400&nocache=1"
-                    }
+                    body: 
+                        {
+                        seller:{
+                            type: String
+                        },
+                        phone: {
+                            type: String
+                        },
+                        address:{
+                            type: String
+                        },
+                        issuing_company: {
+                            type: String
+                        },
+                        publishing_date:{
+                            type: String
+                        },
+                        price: {
+                            type: String,
+                            required: [true,"Bạn chưa nhập giá của sách"]
+                        },
+                        isChecked:{
+                            type: Boolean,
+                            default: false
+                        },
+                        status: {
+                            type: String,
+                            default: "new"
+                        },
+                        image: {
+                            type: String,
+                            required: [true,"Bạn chưa cung cấp hình ảnh của sách"]
+                        }}
+                },
+                "/book/:id": {
+                    method: "GET",
+                    result: "lấy dữ liệu của sách dựa vào id",
+                    header: "Authorization: Bearer {token của admin}"
+                },
+                "/book/:id": {
+                    method: "PUT",
+                    result: "cập nhật dữ liệu của sách dựa vào id",
+                    header: "Authorization: Bearer {token của admin}"
+                },
+                "/book/:id": {
+                    method: "DELETE",
+                    result: "xóa dữ liệu của sách dựa vào id",
+                    header: "Authorization: Bearer {token của admin}"
                 }
             },
             "/post/": {
@@ -113,9 +151,8 @@ const document = async (req, res) => {
                 "/:id/comment/:idCmt/vote": {
                     method: "POST",
                     result: "Vote comment 0-5 sao",
-                    body: ` const idComment = req.body.idComment;
-                        const idUser = req.body.User_ID;
-                        const star = req.body.star;`
+                    body: `const idUser = req.body.User_ID;
+                           const star = req.body.star;`
                 },
                 "/:id/comment/:idCmt/vote": {
                     method: "DELETE",

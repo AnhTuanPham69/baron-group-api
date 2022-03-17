@@ -1,41 +1,51 @@
 // Comment model 
 // Author: Tuanpham
 
-// Post Model 
+// Book Model 
 // Author: Tuanpham
 
 const mongoose = require('mongoose')
 const mongoose_delete = require('mongoose-delete');
 
 const bookShema = new mongoose.Schema({
-    User_ID: {
+    uid: {
         type: String,
         required: [true,"Chưa cung cấp ID của người đăng"]
     },
-    UserName: {
+    seller:{
         type: String
     },
-    Avatar: {
-        type: String
-    },
-    Name: {
+    name: {
         type: String,
         required: [true,"Bạn chưa nhập tên của sách"]
     },
-    Phone: {
+    phone: {
+        type: String
+    },
+    address:{
+        type: String
+    },
+    issuing_company: {
+        type: String
+    },
+    publishing_date:{
         type: String
     },
     Content: {
         type: String
     },
-    Price: {
+    price: {
         type: Number,
         required: [true,"Bạn chưa nhập giá của sách"]
     },
-    Date: {
+    isChecked:{
+        type: Boolean,
+        default: false
+    },
+    date: {
         type: Date
     },
-    Image: {
+    image: {
         type: String,
         required: [true,"Bạn chưa cung cấp hình ảnh của sách"]
     }

@@ -98,30 +98,38 @@ exports.getAll = async (req, res) => {
 };
 
 exports.getOne = async (req, res) => {
-  const { id } = req.params;
+  // const { id } = req.params;
+  const user = req.user;
+  if(!user){
+    return res.status(404).json({ message: "Not found user!" });
+  }
   try {
-    docRef.doc(id).get().then((data) => {
-      if (data.exists) {
-        const user = data.data();
-        return res.status(200).json({ message: "Getting success!", user: user });
-      } else {
-        return res.status(404).json({ message: "Not found user!" });
-      }
-    });
+    const userSystem = await User.findById(user._id).populate('notifications');
+    if(!userSystem){
+      return res.status(404).json({ message: "Not found user!" });
+    }
+    return res.status(200).json({ message: "Getting success!", user: user });
+    // docRef.doc(id).get().then((data) => {
+    //   if (data.exists) {
+    //     const user = data.data();
+    //     return res.status(200).json({ message: "Getting success!", user: user });
+    //   } else {
+    //     return res.status(404).json({ message: "Not found user!" });
+    //   }
+    // });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ message: err });
+    return res.status(500).json({ message: err.messages });
   }
 };
 
 exports.update = async (req, res) => {
-  const { phoneNumber } = req.body;
   try {
-    let user = await User.findOne({ phoneNumber: phoneNumber });
+    let user = req.user;
     if (user && user._id.toString() !== req.params.id)
       return res
         .status(403)
-        .json("Phone number already registered for another account");
+        .json("Not Allowed!");
 
     const updateUser = await User.findByIdAndUpdate(req.params.id, {
       $set: req.body,
@@ -223,7 +231,6 @@ exports.syncUser = async (req, res) => {
 exports.register = (req, res) => {
   const idUser = req.body.User_ID;
   docRef.doc(idUser).get().then(async (data) => {
-
     let infor = data.data();
     const user = {
       idFirebase: idUser,
