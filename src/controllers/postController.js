@@ -181,6 +181,7 @@ exports.likeQuestion = async (req, res) => {
             } else if(like.isLike == true) {
                 like.isLike = false;
                 await like.save();
+                await Like.findByIdAndDelete(like._id);
             }else{
                 like.isLike = true;
                 await like.save();
