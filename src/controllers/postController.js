@@ -39,6 +39,7 @@ exports.postQuestion = async (req, res) => {
             Image: req.body.Image,
             Status: req.body.Status,
             Date: now,
+            Type:req.body.Type,
             User_Name: username,
             Avatar: avt
         });

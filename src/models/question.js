@@ -12,7 +12,6 @@ const questionShema = new mongoose.Schema({
     },
     Type: {
         type: String,
-        default: "public"
     },
     User_Name: {
         type: String
