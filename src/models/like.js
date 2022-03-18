@@ -27,5 +27,6 @@ const likeShema = new mongoose.Schema({
         type: Date
     }
 });
+
 const Like = mongoose.model("Like", likeShema);
 module.exports = Like

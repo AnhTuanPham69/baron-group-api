@@ -127,7 +127,12 @@ exports.delete = async (req, res) => {
         // Thông báo
         const contentNotice = "Xóa bài viết thành công";
         const typeNotice = `post:deleted`;
-        const newNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
+        const newNotice = new Notification( {
+                    User_ID: user._id,
+                    Content: `${time}: ${contentNotice}`,
+                    Date: now,
+                    Url: typeNotice
+        });
         await newNotice.save();
         user.notifications = user.notifications.concat(newNotice);
         await user.save();
@@ -156,19 +161,29 @@ exports.likeQuestion = async (req, res) => {
                     User_ID: user._id,
                     User_Name: user.name,
                     Post_ID: id,
-                    Date: now
+                    Date: now,
+                    isLike: true
                 });
                 await newLike.save();
                 if (postOwner != user._id) {
                     // Thông báo
                     const contentNotice = `${user.name} đã like bài viết của bạn`;
-                    const typeNotice = `like:${id}`;
-                    const newNotice = new Notification(handleNotice(postOwner, contentNotice, typeNotice));
+                    const typeNotice = `like/${id}`;
+                    const newNotice = new Notification({
+                        User_ID: post.User_ID,
+                        Content: `${time}: ${contentNotice}`,
+                        Date: now,
+                        Url: typeNotice
+                    });
                     await newNotice.save();
                 }
 
-            } else {
-                await Like.findOneAndDelete({ User_ID: user._id, Post_ID: post._id });
+            } else if(like.isLike == true) {
+                like.isLike = false;
+                await like.save();
+            }else{
+                like.isLike = true;
+                await like.save();
             }
         }
 
