@@ -13,7 +13,7 @@ How to run this project
 
 Step 1: clone this project from repository
 
-Step 2: cd to folder Back-End/server
+Step 2: cd to folder /server
 
 step 3: Run command line: npm install
 
