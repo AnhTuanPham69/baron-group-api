@@ -114,6 +114,7 @@ exports.update = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
+    const user = req.user;
     try {
         const { id } = req.params;
         const post = await Question.findById(id).populate('likes');
@@ -130,8 +131,8 @@ exports.delete = async (req, res) => {
         await newNotice.save();
         user.notifications = user.notifications.concat(newNotice);
         await user.save();
-
-        return res.status(200).json("Deleted");
+        const listPost = await Question.find().populate('likes').populate("comments");
+        return res.status(200).json({message: "Deleted", listPost: listPost});
     } catch (err) {
         console.log(err);
         return res.status(500).json(err);

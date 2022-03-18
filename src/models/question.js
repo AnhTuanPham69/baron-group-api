@@ -53,6 +53,6 @@ const questionShema = new mongoose.Schema({
    
 });
 
-questionShema.plugin(mongoose_delete, { deletedAt : true });
+questionShema.plugin(mongoose_delete, { deletedAt : true, overrideMethods: 'all' });
 const Question = mongoose.model('Question', questionShema);
 module.exports = Question;
