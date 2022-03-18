@@ -1,3 +1,6 @@
+const date = require('date-and-time');
+const now = new Date();
+const time = date.format(now, 'HH:mm DD/MM/YYYY');
 
 
 exports.handleNotice = async (uid, content, type) => {

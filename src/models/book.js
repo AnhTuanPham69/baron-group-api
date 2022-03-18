@@ -31,19 +31,21 @@ const bookShema = new mongoose.Schema({
     publishing_date:{
         type: String
     },
-    Content: {
-        type: String
-    },
     price: {
-        type: Number,
+        type: String,
         required: [true,"Bạn chưa nhập giá của sách"]
     },
     isChecked:{
         type: Boolean,
         default: false
     },
+    status: {
+        type: String,
+        default: "new"
+    },
     date: {
-        type: Date
+        type: Date,
+        default: Date.now
     },
     image: {
         type: String,

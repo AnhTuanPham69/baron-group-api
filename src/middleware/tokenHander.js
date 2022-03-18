@@ -41,7 +41,7 @@ exports.isUser = async (req, res, next) => {
         const admin = await Admin.findById(tokenDecoded.id);
         const user = await User.findById(tokenDecoded.id);
         if (!admin && !user) return res.status(403).json('Not allowed!');
-        console.log("user: "+tokenDecoded.id);
+
         req.admin = admin;
         req.user = user;
         next();
@@ -73,7 +73,6 @@ exports.verifyToken = async (req, res, next) => {
         const user = await User.findById(tokenDecoded.id);
         
         if (!admin && !user ) return res.status(403).json('Not allowed!');
-        console.log("user:  "+tokenDecoded.id);
         
         req.admin = admin;
         req.user = user;

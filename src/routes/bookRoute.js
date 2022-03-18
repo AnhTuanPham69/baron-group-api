@@ -9,6 +9,12 @@ router.post(
     bookController.postBook
 );
 
+router.post(
+    '/createCategory',
+    tokenHandler.isUser,
+    bookController.createCategory
+);
+
 router.get(
     '/',
     tokenHandler.verifyAdminToken,

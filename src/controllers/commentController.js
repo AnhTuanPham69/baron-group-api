@@ -11,14 +11,23 @@ const Vote = require('../models/vote');
 const db = require('../config/firebaseService');
 const Reply = require('../models/reply');
 const Notification = require('../models/notification');
-const { handleNotice } = require('./postController');
+// const { handleNotice } = require('./notificationController');
 
 const docRef = db.collection('users');
 
 //Date
+const date = require('date-and-time');
 const now = new Date();
+const time = date.format(now, 'HH:mm DD/MM/YYYY');
 
-
+const handleNotice = async (uid, content, type) => {
+    return {
+        User_ID: uid,
+        Content: `${time}: ${content}`,
+        Date: now,
+        Url: type
+    }
+}
 exports.postComment = async (req, res) => {
     const User_ID = req.body.User_ID;
     const image = req.body.Image;
@@ -49,7 +58,7 @@ exports.postComment = async (req, res) => {
             if(postOwner != user._id){
                 const contentNotice =  `${user.name} đã bình luận bài viết của bạn`
                 const typeNotice = `comment:${id}`;
-                const newNotice = new Notification(handleNotice(postOwner, contentNotice, typeNotice));
+                const newNotice = new Notification(await handleNotice(postOwner, contentNotice, typeNotice));
                 await newNotice.save();
             }
         } else {
@@ -68,14 +77,14 @@ exports.getComment = async (req, res) => {
     const { id } = req.params;
     try {
         let question = await Question.findById(id).populate('comments');
-
+        
         if (!question) {
             return res.status(404).json({ message: "This post does not exist!" });
         }
         return res.status(200).json({ message: "Getting success!", "List Comment": question.comments });
     } catch (err) {
         console.log(err);
-        return res.status(500).json({ message: "Something is wrong!", err: { err } });
+        return res.status(500).json({ message: "Something is wrong!", err: err.messages });
     }
 }
 
@@ -85,10 +94,11 @@ exports.replyComment = async (req, res) => {
     const idUser = req.body.User_ID;
     const content = req.body.Content;
         if(!content) content="no content";
+    const user = req.user;
     try {
         const comment = await Comment.findById(idComment);
         
-        const user = req.user;
+        
         if(!user){
             return res.status(404).json({ message: "This user does not exist!" });
         }
@@ -100,6 +110,8 @@ exports.replyComment = async (req, res) => {
         if(!image) image = null
         const cid = comment._id;
         const uid = user._id;
+
+        console.log("user: ", user.name);
 
         const newReply = {
             User_ID: uid,
@@ -115,15 +127,28 @@ exports.replyComment = async (req, res) => {
         comment.replies = comment.replies.concat(reply);
         await comment.save();
         const commentOwner = comment.User_ID;
-
+        console.log("Notice: "+ commentOwner.User_Name +" reply");
+       ;
         if(commentOwner != user._id){
-            const contentNotice =  `${user.name} đã trả lời bình luận bài viết của bạn`
+            console.log("Uer",comment)
+            let contentNotice =  `${user.name} đã trả lời bình luận bài viết của bạn`
             const typeNotice = `reply:${comment._id}`;
-            const newNotice = new Notification(handleNotice(commentOwner, contentNotice, typeNotice));
+            const newNotice = new Notification({
+                User_ID: commentOwner,
+                Content: `${time}: ${contentNotice}`,
+                Date: now,
+                Url: typeNotice
+            });
             await newNotice.save();
 
-            contentNotice =  `Bạn đang theo dõi bình luận của ${commentOwner.User_Name}`
-            const otherNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
+            contentNotice =  `Bạn đang theo dõi bình luận của ${comment.User_Name}`
+            const otherNotice = new Notification({
+                User_ID: user._id,
+                Content: `${time}: ${contentNotice}`,
+                Date: now,
+                Url: typeNotice
+            });
+          
             await otherNotice.save();
         }
         const getComment = await Comment.findById(idComment).populate('replies');
@@ -138,7 +163,7 @@ exports.getReplyComment = async (req, res) => {
     const idComment = req.params.idCmt;
     try {
         const comment = await Comment.findById(idComment).populate('replies');
- 
+        
         return res.status(200).json({ message: "Getting success!", "Reply Comment": comment });
     } catch (error) {
         console.log(error);
@@ -154,9 +179,9 @@ exports.voteComment = async (req, res) => {
     const star = req.body.star;
     try {
         const comment = await Comment.findById(idComment);
-        const user = await User.findOne({ idFirebase: idUser });
+        const user = req.user;
         if (user) {
-            const vote = await Vote.findOne({ User_ID: user._id })
+            const vote = await Vote.findOne({ User_ID: user._id, Comment_ID: comment._id})
             if (!vote) {
                 const vote = {
                     User_ID: user._id,
