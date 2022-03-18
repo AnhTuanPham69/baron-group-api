@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
-const Analysis = require("../models/analysis");
 
 //Firebase data
 const db = require("../config/firebaseService");
@@ -272,9 +271,7 @@ exports.loginFb = async (req, res) => {
         },
         process.env.JWT_KEY
       );
-      const anaLogin = await Analysis.findOne();
-       anaLogin.login.push(now);
-        await anaLogin.save();
+
       return res.status(201).json({
         mes: "Login is successful!",
         user: newUser,
