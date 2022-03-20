@@ -23,20 +23,20 @@ const questionShema = new mongoose.Schema({
         type: String
     },
     Content: {
-        type: String,
-        required: true
-    },
-    Class: {
         type: String
     },
-    Subject: {
+    Class: {
         type: String
     },
     Image: {
         type: String
     },
+    Video:{
+        type: String
+    },
     Date: {
-        type: Date
+        type: Date,
+        default: Date.now
     },
     Status: {
         type: String
