@@ -109,6 +109,17 @@ const document = async (req, res) => {
                     method: "DELETE",
                     result: "xóa dữ liệu của sách dựa vào id",
                     header: "Authorization: Bearer {token của admin}"
+                },
+                "/book/createCategory": {
+                    method: "POST",
+                    result: "tạo category",
+                    header: "Authorization: Bearer {token của admin}",
+                    body: "{slideImg: ..., name: ...}"
+                },
+                "/book/getCategory": {
+                    method: "GET",
+                    result: "get list category",
+                    header: "Authorization: Bearer {token của admin}"
                 }
             },
             "/post/": {

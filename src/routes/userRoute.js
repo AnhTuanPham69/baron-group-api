@@ -3,6 +3,7 @@ const router = express.Router();
 const tokenHandler = require('../middleware/tokenHander');
 const userController = require('../controllers/userController');
 const postController = require('../controllers/postController');
+const notificationController = require('../controllers/notificationController');
 
 router.get(
     '/listUserFirebase',
@@ -49,6 +50,19 @@ router.delete(
     '/:id',
     tokenHandler.verifyAdminToken,
     userController.delete
+);
+
+// notification
+router.get(
+    '/notice',
+    tokenHandler.verifyToken,
+    notificationController.getNotice
+);
+
+router.get(
+    '/notice/:id',
+    tokenHandler.verifyToken,
+    notificationController.getOneNotice
 );
 
 module.exports = router;

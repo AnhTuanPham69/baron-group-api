@@ -14,11 +14,13 @@ const Analysis = require('../models/analysis');
 
 //Date
 const date = require('date-and-time');
+const now = new Date();
+const time = date.format(now, 'HH:mm DD/MM/YYYY');
+
 const Notification = require('../models/notification');
 const { handleNotice } = require('./notificationController');
 
-const now = new Date();
-const time = date.format(now, 'HH:mm DD/MM/YYYY');
+
 
 
 exports.postQuestion = async (req, res) => {
@@ -28,21 +30,21 @@ exports.postQuestion = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User does not exist" });
         }
-        let username = user.name;
-        let avt = user.avatar;
-        const newPost = new Question({
-            User_ID: user._id,
-            Title: req.body.Title,
-            Content: req.body.Content,
-            Class: req.body.Class,
-            Subject: req.body.Subject,
-            Image: req.body.Image,
-            Status: req.body.Status,
-            Date: now,
-            Type:req.body.Type,
-            User_Name: username,
-            Avatar: avt
-        });
+
+        const newPost = new Question(req.body);
+        newPost.User_ID =  user._id;
+        newPost.Avatar =  user.avatar;
+        newPost.User_Name =  user.name;
+        // Title: req.body.Title,
+        // Content: req.body.Content,
+        // Class: req.body.Class,
+        // Subject: req.body.Subject,
+        // Image: req.body.Image,
+        // Status: req.body.Status,
+        // Type:req.body.Type,
+        // User_ID: user._id,
+        // User_Name: username,
+        // Avatar: avt
         await newPost.save();
         const id = newPost._id;
 
@@ -52,7 +54,10 @@ exports.postQuestion = async (req, res) => {
         const newNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
         await newNotice.save();
         user.notifications = user.notifications.concat(newNotice);
+        user.posts = user.posts.concat(newPost);
         await user.save();
+
+
         let question = await Question.findById(id).populate('comments');
         return res.status(200).json({ message: "Getting success!", "List Post": question });
 

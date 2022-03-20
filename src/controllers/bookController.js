@@ -37,16 +37,35 @@ exports.createCategory = async (req, res) => {
             return res.status(500).json({ message: "User không được cung cấp"});
         }
         const book = req.body;
-        const newBook = new BookCategory(book);
-        await newBook.save();
+        const newCategory = new BookCategory(book);
+        await newCategory.save();
         return res.status(200).json({
             message: "Posting category's book success",
-            book: newBook
+            category: newCategory
         })
     } catch (err) {
         return res.status(500).json({ message: "Something is wrong!", err: err.message });
     }
 }
+
+exports.getListCategory = async (req, res) => {
+    try {
+        const user = req.user;
+        if(!user){
+            return res.status(403).json({ message: "Not Allowed!"});
+        }
+
+        const listCategory = await BookCategory.find();
+        
+        return res.status(200).json({
+            message: "getting category's book success",
+            category: listCategory
+        })
+    } catch (err) {
+        return res.status(500).json({ message: "Something is wrong!", err: err.message });
+    }
+}
+
 exports.getBook = async (req, res) => {
     try {
         const book = await Book.find();

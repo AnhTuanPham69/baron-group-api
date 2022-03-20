@@ -5,19 +5,25 @@ const bookController = require('../controllers/bookController');
 
 router.post(
     '/',
-    tokenHandler.isUser,
+    tokenHandler.verifyToken,
     bookController.postBook
 );
 
 router.post(
     '/createCategory',
-    tokenHandler.isUser,
+    tokenHandler.verifyToken,
     bookController.createCategory
 );
 
 router.get(
+    '/getCategory',
+    tokenHandler.verifyToken,
+    bookController.getListCategory
+);
+
+router.get(
     '/',
-    tokenHandler.verifyAdminToken,
+    tokenHandler.verifyToken,
     bookController.getBook
 );
 

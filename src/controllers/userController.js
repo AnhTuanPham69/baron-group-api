@@ -263,7 +263,7 @@ exports.register = (req, res) => {
 
 exports.loginFb = async (req, res) => {
   const idUser = req.body.User_ID;
-    const newUser = await User.findOne({ idFirebase: idUser });
+    const newUser = await User.findOne({ idFirebase: idUser }).populate('notifications');
     if(newUser){
       const token = jwt.sign(
         {

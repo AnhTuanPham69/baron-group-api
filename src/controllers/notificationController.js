@@ -1,4 +1,5 @@
 const date = require('date-and-time');
+const Notification = require('../models/notification');
 const now = new Date();
 const time = date.format(now, 'HH:mm DD/MM/YYYY');
 
@@ -29,13 +30,13 @@ exports.getNotice = async (req, res) => {
 exports.getOneNotice = async (req, res) => {
     const idNoti = req.params.id;
     try {
-        let notice = await Notification.find(idNoti);
+        let notice = await Notification.findById(idNoti);
         if(!notice){
             return res.status(204).json({ message: "No notice!"});  
         }
         notice.Readed = true;
         await notice.save();
-        notice = await Notification.find(idNoti);
+        notice = await Notification.findById(idNoti);
         return res.status(200).json({ message: "Getting success!", "notificatons": notice });
     } catch (err) {
         console.log(err);
