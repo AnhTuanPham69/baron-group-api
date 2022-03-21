@@ -179,7 +179,7 @@ const document = async (req, res) => {
                     method: "DELETE",
                     result: "Xóa bình chọn",
                 },
-                "/:id/comment/:idCmt/getVote": {
+                "/:id/comment/:idCmt/vote": {
                     method: "GET",
                     result: "Lấy danh sách bình chọn của comment đó sau đó lấy tổng số sao chia cho tổng lượng vote"
                 },

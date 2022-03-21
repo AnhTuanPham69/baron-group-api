@@ -7,12 +7,5 @@ router.post(
     commentController.postComment
 );
 
-// router.get('/listQuestion',
-// commentController.getListQuestion
-// );
-
-// router.get('/:id',
-// commentController.getQuestion
-// );
 
 module.exports = router;

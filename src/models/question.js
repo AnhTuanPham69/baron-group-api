@@ -28,6 +28,9 @@ const questionShema = new mongoose.Schema({
     Class: {
         type: String
     },
+    Subject: {
+        type: String
+    },
     Image: {
         type: String
     },

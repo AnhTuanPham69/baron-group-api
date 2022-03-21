@@ -13,6 +13,12 @@ const userSchema = mongoose.Schema({
         required: true,
         trim: true
     },
+    posts:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Question"
+        }
+    ],
     role: {
         type: String,
         required: true,

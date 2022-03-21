@@ -8,6 +8,9 @@ const tutorSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
+    cv:{
+        type: String
+    },
     phone: {
         type: String
     },
@@ -22,7 +25,8 @@ const tutorSchema = mongoose.Schema({
         type: String,
     },
     checked: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     address: {
         type: String
@@ -30,13 +34,7 @@ const tutorSchema = mongoose.Schema({
     register_date:{
         type: Date,
         default: Date.now
-    },
-    notifications: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Notification"
-        }
-    ],
+    }
 })
 
 tutorSchema.pre('save', async function (next) {
@@ -47,28 +45,6 @@ tutorSchema.pre('save', async function (next) {
     }
     next()
 })
-
-tutorSchema.methods.generateAuthToken = async function() {
-    // Generate an auth token for the user
-    const user = this
-    const token = jwt.sign({_id: user._id}, process.env.JWT_KEY)
-    user.tokens = user.tokens.concat({token})
-    await user.save()
-    return token
-}
-
-tutorSchema.statics.findByCredentials = async (userName, password) => {
-    // Search for a user by email and password.
-    const user = await User.findOne({ userName } )
-    if (!user) {
-        throw new Error({ error: 'Invalid login credentials' })
-    }
-    const isPasswordMatch = await bcrypt.compare(password, user.password)
-    if (!isPasswordMatch) {
-        throw new Error({ error: 'Invalid login credentials' })
-    }
-    return user
-}
 
 const Tutor = mongoose.model('Tutor', tutorSchema)
 

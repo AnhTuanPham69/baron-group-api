@@ -15,6 +15,10 @@ const bookShema = new mongoose.Schema({
     seller:{
         type: String
     },
+    category_id:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "BookCategory"
+    },
     name: {
         type: String,
         required: [true,"Bạn chưa nhập tên của sách"]

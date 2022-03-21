@@ -11,6 +11,9 @@ const notificationShema = new mongoose.Schema({
     Url: {
         type: String
     },
+    Avt: {
+        type: String
+    },
     Readed:{
         type: Boolean,
         default: false
