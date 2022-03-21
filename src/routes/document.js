@@ -71,10 +71,10 @@ const document = async (req, res) => {
                     method: "POST",
                     result: "Đăng sách",
                     header: "Authorization: Bearer {token của user}",
-                    body: 
+                    body:
                         {
                         category_id:{
-                                type: mongoose.Schema.Types.ObjectId,
+                                type: "id",
                                 ref: "BookCategory"
                             },
                         seller:{
