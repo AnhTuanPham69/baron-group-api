@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
     try {
         const user = await Admin.findOne({ username: username });
         if (!user) {
-           return res.status(401).json({
+            return res.status(401).json({
                 message: "Username or Password is not match"
             });
         }
@@ -82,9 +82,9 @@ exports.create_user = async (req, res) => {
 
 // Forgot Password
 exports.forgotPassword = async (req, res) => {
-    const email= req.body.email;
+    const email = req.body.email;
     try {
-        let user = await Admin.findOne({email: email});
+        let user = await Admin.findOne({ email: email });
 
         if (!user) return res.status(403).json('Email is incorrect');
 
@@ -101,10 +101,11 @@ exports.forgotPassword = async (req, res) => {
         <hr/>
         <b>Yêu cầu này được thực hiện trên thiết bị: ${os.hostname()}</b>
                   <br/>Vào lúc: ${time} `;
-        // await sendEmail(user.email, subject, mes);
+        await sendEmail(user.email, subject, mes);
 
         res.status(201).json({
-            token
+            message: "Mật khẩu mới đã được gửi qua email",
+            token: token
         });
     } catch (err) {
         console.log(err);
@@ -114,14 +115,14 @@ exports.forgotPassword = async (req, res) => {
 
 // Change Password
 exports.changePassword = async (req, res) => {
-    const email= req.body.email;
+    const email = req.body.email;
     const oldPw = req.body.oldPw;
     const newPw = req.body.newPw;
     try {
-        let user = await Admin.findOne({email: email});
+        let user = await Admin.findOne({ email: email });
 
         if (!user) return res.status(403).json('Email is incorrect');
-        
+
         const isPasswordMatch = await bcrypt.compare(oldPw, user.password)
         if (!isPasswordMatch) {
             return res.status(401).json({
