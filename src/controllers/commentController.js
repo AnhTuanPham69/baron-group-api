@@ -17,6 +17,7 @@ const docRef = db.collection('users');
 
 //Date
 const date = require('date-and-time');
+const { findOne } = require('../models/question');
 const now = new Date();
 const time = date.format(now, 'HH:mm DD/MM/YYYY');
 
@@ -37,7 +38,7 @@ exports.postComment = async (req, res) => {
         if (!question) {
             return res.status(404).json({ message: "This post does not exist!" });
         }
-        const postOwner = question.User_ID;
+        const postOwner = await User.findById(question.User_ID);
         const user = req.user;
         console.log(user);
         if (user) {
@@ -55,10 +56,15 @@ exports.postComment = async (req, res) => {
             question.comments = question.comments.concat(idCmt);
             await question.save();
 
-            if(postOwner != user._id){
+            if(postOwner._id != user._id){
                 const contentNotice =  `${user.name} đã bình luận bài viết của bạn`
                 const typeNotice = `comment:${id}`;
-                const newNotice = new Notification(await handleNotice(postOwner, contentNotice, typeNotice));
+                const newNotice = new Notification({            
+                    User_ID: postOwner._id,
+                    Content: `${contentNotice}`,
+                    Date: now,
+                    Url: typeNotice,
+                    Avt: postOwner.avatar});
                 await newNotice.save();
             }
         } else {
@@ -126,18 +132,19 @@ exports.replyComment = async (req, res) => {
         await reply.save();
         comment.replies = comment.replies.concat(reply);
         await comment.save();
-        const commentOwner = comment.User_ID;
+        const commentOwner = await User.findById(comment.User_ID);
         console.log("Notice: "+ commentOwner.User_Name +" reply");
        ;
-        if(commentOwner != user._id){
+        if(commentOwner._id != user._id){
             console.log("Uer",comment)
             let contentNotice =  `${user.name} đã trả lời bình luận bài viết của bạn`
             const typeNotice = `reply:${comment._id}`;
             const newNotice = new Notification({
-                User_ID: commentOwner,
+                User_ID: commentOwner._id,
                 Content: `${time}: ${contentNotice}`,
                 Date: now,
-                Url: typeNotice
+                Url: typeNotice,
+                Avt: commentOwner.avatar
             });
             await newNotice.save();
 
@@ -146,7 +153,8 @@ exports.replyComment = async (req, res) => {
                 User_ID: user._id,
                 Content: `${time}: ${contentNotice}`,
                 Date: now,
-                Url: typeNotice
+                Url: typeNotice,
+                Avt: user.avatar
             });
           
             await otherNotice.save();
@@ -195,17 +203,27 @@ exports.voteComment = async (req, res) => {
 
                 comment.votes = listVote;
                 await comment.save();
-                const commentOwner = comment.User_ID;
-
-                if(commentOwner != user._id){
+                const commentOwner = await User.findById(comment.User_ID);
+                if(commentOwner._id != user._id){
                     let contentNotice =  `${user.name} đã đánh giá ${star} sao cho bình luận của bạn`
-                    let typeNotice = `vote:${comment._id}`;
-                    let newNotice = new Notification(handleNotice(commentOwner, contentNotice, typeNotice));
+                    let typeNotice = `comment/${comment._id}`;
+                    let newNotice = new Notification({            
+                        User_ID: commentOwner._id,
+                        Content: `${contentNotice}`,
+                        Date: now,
+                        Url: typeNotice,
+                        Avt: commentOwner.avatar});
                     await newNotice.save();
         
-                    contentNotice =  `Bạn đang theo dõi bình luận của ${commentOwner.User_Name}`
-                    const otherNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
+                    contentNotice =  `Bạn đang theo dõi bình luận của ${commentOwner.name}`
+                    const otherNotice = new Notification({            
+                        User_ID: user._id,
+                        Content: `${contentNotice}`,
+                        Date: now,
+                        Url: typeNotice,
+                        Avt: user.avatar});
                     await otherNotice.save();
+                
                 }else{
                     return res.status(403).json({ message: "Bạn không thể đánh giá bình luận của chính mình"});
                 }
@@ -261,8 +279,13 @@ exports.deleteVote = async (req, res) => {
 
                 // Thông báo
                 const contentNotice = "Xóa đánh giá thành công";
-                const typeNotice = `vote:deleted`;
-                const newNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
+                const typeNotice = `post/${comment.Post_ID}/comment/${comment._id}`;
+                const newNotice = new Notification({            
+                    User_ID: user._id,
+                    Content: `${contentNotice}`,
+                    Date: now,
+                    Url: typeNotice,
+                    Avt: user.avatar});
                 await newNotice.save();
 
         let vote = await Vote.find();

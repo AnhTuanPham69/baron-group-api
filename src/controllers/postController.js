@@ -24,7 +24,6 @@ const { handleNotice } = require('./notificationController');
 
 
 exports.postQuestion = async (req, res) => {
-    let User_ID = req.body.User_ID;
     const user = req.user;
     try {
         if (!user) {
@@ -35,28 +34,23 @@ exports.postQuestion = async (req, res) => {
         newPost.User_ID =  user._id;
         newPost.Avatar =  user.avatar;
         newPost.User_Name =  user.name;
-        // Title: req.body.Title,
-        // Content: req.body.Content,
-        // Class: req.body.Class,
-        // Subject: req.body.Subject,
-        // Image: req.body.Image,
-        // Status: req.body.Status,
-        // Type:req.body.Type,
-        // User_ID: user._id,
-        // User_Name: username,
-        // Avatar: avt
+
         await newPost.save();
         const id = newPost._id;
 
         // Thông báo
         const contentNotice = "Đăng bài viết thành công";
         const typeNotice = `/post/${id}`;
-        const newNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
+        const newNotice = new Notification({            
+            User_ID: user._id,
+            Content: `${contentNotice}`,
+            Date: now,
+            Url: typeNotice,
+            Avt: user.avatar});
         await newNotice.save();
         user.notifications = user.notifications.concat(newNotice);
         user.posts = user.posts.concat(newPost);
         await user.save();
-
 
         let question = await Question.findById(id).populate('comments');
         return res.status(200).json({ message: "Getting success!", "List Post": question });
@@ -89,6 +83,7 @@ exports.getQuestion = async (req, res) => {
 
 exports.update = async (req, res) => {
     const { id } = req.params;
+    const user = req.user;
     try {
         let post = await Question.findById(id);
         const postOwner = post.User_ID;
@@ -105,9 +100,15 @@ exports.update = async (req, res) => {
         post = await Question.findOne({ _id: id }).populate('comments');
 
         // Thông báo
-        const contentNotice = "Cập nhật bài viết thành công";
-        const typeNotice = `post/${id}`;
-        const newNotice = new Notification(handleNotice(user._id, contentNotice, typeNotice));
+        let contentNotice = "Cập nhật bài viết thành công";
+        let typeNotice = `post/${id}`;
+        const newNotice = new Notification({
+            User_ID: user._id,
+            Content: `${time}: ${contentNotice}`,
+            Date: now,
+            Url: typeNotice,
+            Avt: user.avatar
+        });
         await newNotice.save();
         user.notifications = user.notifications.concat(newNotice);
         await user.save();
@@ -137,7 +138,8 @@ exports.delete = async (req, res) => {
                     User_ID: user._id,
                     Content: `${time}: ${contentNotice}`,
                     Date: now,
-                    Url: typeNotice
+                    Url: typeNotice,
+                    Avt: user.avatar
         });
         await newNotice.save();
         user.notifications = user.notifications.concat(newNotice);
@@ -161,7 +163,7 @@ exports.likeQuestion = async (req, res) => {
         if(!post){
             return res.status(404).json({ message: "Bài post này không tồn tại" });
         }
-        const postOwner = post.User_ID;
+        const postOwner = await User.findById(post.User_ID);
         if (user) {
             const like = await Like.findOne({ User_ID: user._id, Post_ID: post._id })
 
@@ -174,12 +176,22 @@ exports.likeQuestion = async (req, res) => {
                     isLike: true
                 });
                 await newLike.save();
-                if (postOwner != user._id) {
+                if (postOwner._id != user._id) {
                     // Thông báo
-                    const contentNotice = `${user.name} đã like bài viết của bạn`;
-                    const typeNotice = `like/${id}`;
-                    const newNotice = new Notification({
+                    let contentNotice = `${user.name} đã like bài viết của bạn`;
+                    let typeNotice = `like/${id}`;
+                    let newNotice = new Notification({
                         User_ID: post.User_ID,
+                        Content: `${contentNotice}`,
+                        Date: now,
+                        Url: typeNotice,
+                        Avt: postOwner.avatar
+                    });
+
+                     contentNotice = `Bạn đã like bài viết của ${postOwner.name}`;
+                     typeNotice = `post/${id}`;
+                     newNotice = new Notification({
+                        User_ID: user._id,
                         Content: `${contentNotice}`,
                         Date: now,
                         Url: typeNotice,
