@@ -73,6 +73,10 @@ const document = async (req, res) => {
                     header: "Authorization: Bearer {token của user}",
                     body: 
                         {
+                        category_id:{
+                                type: mongoose.Schema.Types.ObjectId,
+                                ref: "BookCategory"
+                            },
                         seller:{
                             type: String
                         },

@@ -18,6 +18,7 @@ exports.postBook = async (req, res) => {
             return res.status(500).json({ message: "User không được cung cấp"});
         }
         const book = req.body;
+         book.uid = user._id;
         const newBook = new Book(book);
         await newBook.save();
         
