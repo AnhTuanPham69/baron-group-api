@@ -22,20 +22,16 @@ const document = async (req, res) => {
                 }
             },
             "user route: user/": {
+                "/":
+                {
+                    method: "GET",
+                    result: "Find user by id"
+                },
                 "/listUserFirebase":
                 {
                     method: "GET",
-                    result: "get list user from firebase"
-                },
-                "/:idFirebase":
-                {
-                    method: "GET",
-                    result: "Find user by id"
-                },
-                "/:id":
-                {
-                    method: "GET",
-                    result: "Find user by id"
+                    result: "get list user from firebase",
+                    header: `Authorization: Bearer {token của admin}`
                 },
                 "/register":
                 {
@@ -50,12 +46,26 @@ const document = async (req, res) => {
                     result: "Mỗi lần đăng nhập sẽ kiểm tra id này có trong hệ thống hay không và trả về token",
                     body: `User_ID: "Chuỗi id user trên firebase" `
                 },
+                
+                "/notice":
+                {
+                    method: "GET",
+                    result: "Lấy list thông báo của user dựa trên token",
+                    header: `Authorization: Bearer {token của user}`
+                },
+
+                "/notice/:id":
+                {
+                    method: "GET",
+                    result: "Xem chi tiết thông báo và đánh dấu là đã đọc",
+                    header: `Authorization: Bearer {token của user}`
+                },
             },
             "book route": {
                 "/book/": {
                     method: "GET",
                     result: "lấy danh sách của sách",
-                    header: "Authorization: Bearer {token của admin}"
+                    header: "Authorization: Bearer {token của user}}"
                 },
                 "/book/": {
                     method: "POST",

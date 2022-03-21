@@ -35,12 +35,14 @@ exports.verifyAdminToken = async (req, res, next) => {
     }
 }
 
-exports.isUser = async (req, res, next) => {
+exports.verifyUser = async (req, res, next) => {
     const tokenDecoded = tokenDecode(req);
+    const verify_id = req.body.User_ID;
     if (tokenDecoded) {
         const admin = await Admin.findById(tokenDecoded.id);
         const user = await User.findById(tokenDecoded.id);
-        if (!admin && !user) return res.status(403).json('Not allowed!');
+        const isUser = await User.findOne({idFirebase: verify_id});
+        if (!admin && !user || user._id !== isUser._id) return res.status(403).json('Not allowed!');
 
         req.admin = admin;
         req.user = user;

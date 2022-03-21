@@ -57,7 +57,7 @@ router.get(
 /* reply comment */
 router.post(
     '/:id/comment/:idCmt/reply',
-    tokenHandler.isUser,
+    tokenHandler.verifyToken,
     commentController.replyComment
 );
 
@@ -75,22 +75,21 @@ router.post(
 );
 
 router.get(
-    '/:id/comment/:voteId',
+    '/:id/comment/:idCmt/vote',
+    tokenHandler.verifyToken,
+    commentController.getVote
+);
+
+router.get(
+    '/:id/comment/vote/:voteId',
     tokenHandler.verifyToken,
     commentController.getOneVote
 );
 
 router.delete(
-    '/:id/comment/vote',
+    '/:id/comment/:idComment/vote',
     tokenHandler.verifyToken,
     commentController.deleteVote
 );
-
-router.get(
-    '/:id/comment/:idCmt/getVote',
-    tokenHandler.verifyToken,
-    commentController.getVote
-);
-
 
 module.exports = router;

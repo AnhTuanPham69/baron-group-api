@@ -158,6 +158,9 @@ exports.likeQuestion = async (req, res) => {
     try {
         const user = req.user;
         const post = await Question.findById(id).populate('likes');
+        if(!post){
+            return res.status(404).json({ message: "Bài post này không tồn tại" });
+        }
         const postOwner = post.User_ID;
         if (user) {
             const like = await Like.findOne({ User_ID: user._id, Post_ID: post._id })
@@ -177,9 +180,10 @@ exports.likeQuestion = async (req, res) => {
                     const typeNotice = `like/${id}`;
                     const newNotice = new Notification({
                         User_ID: post.User_ID,
-                        Content: `${time}: ${contentNotice}`,
+                        Content: `${contentNotice}`,
                         Date: now,
-                        Url: typeNotice
+                        Url: typeNotice,
+                        Avt: user.avatar
                     });
                     await newNotice.save();
                 }

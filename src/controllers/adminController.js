@@ -36,13 +36,8 @@ exports.login = async (req, res) => {
 
         //Gửi mail đăng nhập (toEmail, subject, message)
         let subject = "Đăng Nhập Thành Công";
-        // let mes = `<b>Đăng nhập thành công tài khoản quản trị viên trên thiết bị : ${os.hostname()}</b>
-        //             <br/>Vào lúc: ${time} `;
-        let mes = `<b>Cảm ơn bạn đã quân tâm đến ứng dụng của chúng tôi</b><br/> <br/>
-        Sau khi xem xét kỹ lưỡng hồ sơ của bạn chúng tôi đã quyết định chấp nhận bạn trở thành gia sư cho ứng dụng LearnEx<br/>
-        Mong rằng bạn có thể hỗ trợ và góp phần hợp tác giúp ứng dụng phát triển hơn nữa trong tương lai.<br/><br/>
-        <b>Chúng Tôi Xin Chân Thành Cảm Ơn</b> <br/>
-        <img src="https://www.industrialempathy.com/img/remote/ZiClJf-1920w.jpg"></img>`;
+        let mes = `<b>Đăng nhập thành công tài khoản quản trị viên trên thiết bị : ${os.hostname()}</b>
+                    <br/>Vào lúc: ${time} `;
         await sendEmail(user.email, subject, mes);
 
         res.status(201).json({

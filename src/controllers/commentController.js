@@ -198,9 +198,9 @@ exports.voteComment = async (req, res) => {
                 const commentOwner = comment.User_ID;
 
                 if(commentOwner != user._id){
-                    const contentNotice =  `${user.name} đã đánh giá ${star} sao cho bình luận của bạn`
-                    const typeNotice = `vote:${comment._id}`;
-                    const newNotice = new Notification(handleNotice(commentOwner, contentNotice, typeNotice));
+                    let contentNotice =  `${user.name} đã đánh giá ${star} sao cho bình luận của bạn`
+                    let typeNotice = `vote:${comment._id}`;
+                    let newNotice = new Notification(handleNotice(commentOwner, contentNotice, typeNotice));
                     await newNotice.save();
         
                     contentNotice =  `Bạn đang theo dõi bình luận của ${commentOwner.User_Name}`
@@ -223,7 +223,7 @@ exports.voteComment = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Vote failed", error });
+        return res.status(500).json({ message: "Vote failed", error: error.messages });
     }
 }
 
@@ -251,8 +251,8 @@ exports.getOneVote = async (req, res) => {
 
 exports.deleteVote = async (req, res) => {
 
-    const idComment = req.body.idComment;
-    const user = req.body.User_ID;
+    const idComment = req.params.idComment;
+    const user = req.user;
     try {
         const comment = await Comment.findById(idComment);
         const findVote = await Vote.findOne({Comment_ID: comment._id, User_ID: req.user._id});
