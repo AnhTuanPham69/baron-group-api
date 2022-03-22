@@ -53,11 +53,30 @@ const document = async (req, res) => {
                     result: "Lấy list thông báo của user dựa trên token",
                     header: `Authorization: Bearer {token của user}`
                 },
+                "/notice/read_all":
+                {
+                    method: "GET",
+                    result: "Đánh dấu là đã đọc tất cả thông báo",
+                    header: `Authorization: Bearer {token của user}`
+                },
 
                 "/notice/:id":
                 {
                     method: "GET",
                     result: "Xem chi tiết thông báo và đánh dấu là đã đọc",
+                    header: `Authorization: Bearer {token của user}`
+                },
+                
+                "/notice/:id":
+                {
+                    method: "DELETE",
+                    result: "Xóa thông báo dựa trên id thông báo",
+                    header: `Authorization: Bearer {token của user}`
+                },
+                "'/notice/delete_all'":
+                {
+                    method: "DELETE",
+                    result: "Xóa tất cả thông báo của user",
                     header: `Authorization: Bearer {token của user}`
                 },
             },
@@ -133,7 +152,7 @@ const document = async (req, res) => {
                 "/book/getCategory": {
                     method: "GET",
                     result: "get list category",
-                    header: "Authorization: Bearer {token của admin}"
+                    header: "Authorization: Bearer {token user}"
                 }
             },
             "/post/": {

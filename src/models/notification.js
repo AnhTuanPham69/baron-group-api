@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoose_delete = require('mongoose-delete');
 
 const notificationShema = new mongoose.Schema({
     User_ID: {
@@ -22,5 +23,8 @@ const notificationShema = new mongoose.Schema({
         type: Date
     }
 });
+
+notificationShema.plugin(mongoose_delete, { deletedAt : true, overrideMethods: 'all' });
+
 const Notification = mongoose.model("Notification", notificationShema);
 module.exports = Notification;

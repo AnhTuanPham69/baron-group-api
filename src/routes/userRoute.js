@@ -60,9 +60,27 @@ router.get(
 );
 
 router.get(
+    '/notice/read_all',
+    tokenHandler.verifyToken,
+    notificationController.readAll
+);
+
+router.get(
     '/notice/:id',
     tokenHandler.verifyToken,
     notificationController.getOneNotice
+);
+
+router.delete(
+    '/notice/:id',
+    tokenHandler.verifyToken,
+    notificationController.delete
+);
+
+router.delete(
+    '/notice/delete_all',
+    tokenHandler.verifyToken,
+    notificationController.deleteAll
 );
 
 module.exports = router;

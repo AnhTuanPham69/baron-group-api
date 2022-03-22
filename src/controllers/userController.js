@@ -222,6 +222,8 @@ exports.register = (req, res) => {
   const idUser = req.body.User_ID;
   docRef.doc(idUser).get().then(async (data) => {
     let infor = data.data();
+    console.log(infor);
+    
     const user = {
       idFirebase: idUser,
       name: infor.name,

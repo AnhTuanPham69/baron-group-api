@@ -213,7 +213,7 @@ exports.likeQuestion = async (req, res) => {
         const likeList = await Like.find({ Post_ID: id });
         post.likes = likeList;
         await post.save();
-        const refpost = await Question.findById(id).populate('likes');
+        const refpost = await Question.find().populate('likes');
         length = likeList.length;
         return res.status(200).json({ message: "Quantity Like", "quantityLike": length, "listLike": likeList, post: refpost });
     } catch (err) {
@@ -225,13 +225,25 @@ exports.likeQuestion = async (req, res) => {
 exports.getLike = async (req, res) => {
     const { id } = req.params;
     try {
-        like = await Like.find({ Post_ID: id });
-        length = like.length;
+       const like = await Like.find({ Post_ID: id });
+       const length = like.length;
         return res.status(200).json({ message: "Quantity Like", "quantityLike": length, "listLike": like });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Lost connect!" });
     }
 }
+
+exports.getTotalLike = async (req, res) => {
+    try {
+       const like = await Like.find();
+        const length = like.length;
+        return res.status(200).json({ message: "Quantity Like", "total": length, "listLike": like });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Lost connect!" });
+    }
+}
+
 
 

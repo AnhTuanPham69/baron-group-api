@@ -14,6 +14,12 @@ const tutorSchema = mongoose.Schema({
     phone: {
         type: String
     },
+    class: {
+        type: String
+    },
+    subject: {
+        type: String
+    },
     followers: {
         type: Number,
     },

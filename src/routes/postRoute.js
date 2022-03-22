@@ -41,6 +41,12 @@ tokenHandler.verifyToken,
 postController.getLike
 );
 
+router.get('/like',
+tokenHandler.verifyAdminToken,
+postController.getTotalLike
+);
+
+
 // Comment Route
 router.post(
     '/:id/comment',
