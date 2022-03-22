@@ -52,7 +52,8 @@ exports.postQuestion = async (req, res) => {
         user.posts = user.posts.concat(newPost);
         await user.save();
 
-        let question = await Question.findById(id).populate('comments');
+        const question = await Question.find().populate('comments');
+
         return res.status(200).json({ message: "Getting success!", "List Post": question });
 
     } catch (err) {
@@ -213,7 +214,7 @@ exports.likeQuestion = async (req, res) => {
         const likeList = await Like.find({ Post_ID: id });
         post.likes = likeList;
         await post.save();
-        const refpost = await Question.find().populate('likes');
+        const refpost = await Question.findById(id).populate('likes');
         length = likeList.length;
         return res.status(200).json({ message: "Quantity Like", "quantityLike": length, "listLike": likeList, post: refpost });
     } catch (err) {
