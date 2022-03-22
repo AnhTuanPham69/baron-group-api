@@ -11,7 +11,7 @@ router.post(
 
 router.post(
     '/createCategory',
-    tokenHandler.verifyToken,
+    tokenHandler.verifyAdminToken,
     bookController.createCategory
 );
 

@@ -271,14 +271,44 @@ exports.loginFb = async (req, res) => {
         },
         process.env.JWT_KEY
       );
-
       return res.status(201).json({
         mes: "Login is successful!",
         user: newUser,
         token,
       })
     }
-    return res.status(404).json({
-      mes: "Login failed! User does not exist",
-    })
+    
+    docRef.doc(idUser).get().then(async (data) => {
+      let infor = data.data();
+      const user = {
+        idFirebase: idUser,
+        name: infor.name,
+        avatar: infor.avatar,
+        email: infor.email,
+        role: infor.role,
+        active: infor.active,
+        address: infor.address,
+        register_date: infor.register_date
+      }
+      const newUser = new User(user);
+      await newUser.save();
+      const token = jwt.sign(
+        {
+          id: newUser._id
+        },
+        process.env.JWT_KEY
+      );
+      return res.status(201).json({
+        user: newUser,
+        token,
+      })
+    }).catch((err) => {
+      console.log(err);
+      return res.status(401).json({
+        error: "Registration failed!"
+      })
+    });
+    // return res.status(404).json({
+    //   mes: "Login failed! User does not exist",
+    // })
 }
