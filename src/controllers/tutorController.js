@@ -7,10 +7,23 @@ const sendEmail = require("../config/mail");
 const now = new Date();
 const time = date.format(now, 'HH:mm DD/MM/YYYY');
 
+// exports.getListTutor = async (req, res) => {
+
+//     try {
+//         const listTutor = await Tutor.find();
+
+//         return res.status(200).json({ listTutor: listTutor});
+
+//     } catch (error) {
+//         return res.status(500).json({ message: "Something is wrong!", error: error.messages });
+//     }
+
+// }
+
 exports.getListTutor = async (req, res) => {
 
     try {
-        const listTutor = await Tutor.find();
+        const listTutor = await User.find({role: 'tutor'});
 
         return res.status(200).json({ listTutor: listTutor});
 

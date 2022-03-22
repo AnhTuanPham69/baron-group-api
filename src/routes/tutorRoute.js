@@ -17,11 +17,8 @@ router.post(
 
 router.get(
     '/',
-    tokenHandler.verifyAdminToken,
+    tokenHandler.verifyToken,
     tutorController.getListTutor
 );
-
-
-
 
 module.exports = router;

@@ -30,7 +30,7 @@ router.get(
 
 router.post(
     '/loginFirebase',
-    userController.loginFb
+    userController.register
 );
 
 //tokenHandler.verifyAdminToken,
