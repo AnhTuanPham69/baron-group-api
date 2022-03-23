@@ -40,7 +40,7 @@ exports.postComment = async (req, res) => {
         }
         const postOwner = await User.findById(question.User_ID);
         const user = req.user;
-        console.log(user);
+        
         if (user) {
             const newComment = new Comment({
                 Post_ID: question._id,
@@ -56,9 +56,9 @@ exports.postComment = async (req, res) => {
             question.comments = question.comments.concat(idCmt);
             await question.save();
 
-            if(postOwner._id != user._id){
+            if(postOwner._id.toString() !== user._id.toString()){
                 const contentNotice =  `${user.name} đã bình luận bài viết của bạn`
-                const typeNotice = `comment:${id}`;
+                const typeNotice = `comment/${id}`;
                 const newNotice = new Notification({            
                     User_ID: postOwner._id,
                     Content: `${contentNotice}`,
@@ -135,7 +135,7 @@ exports.replyComment = async (req, res) => {
         const commentOwner = await User.findById(comment.User_ID);
         console.log("Notice: "+ commentOwner.User_Name +" reply");
        ;
-        if(commentOwner._id != user._id){
+        if(commentOwner._id.toString() != user._id.toString()){
             console.log("Uer",comment)
             let contentNotice =  `${user.name} đã trả lời bình luận bài viết của bạn`
             const typeNotice = `reply:${comment._id}`;
@@ -204,7 +204,7 @@ exports.voteComment = async (req, res) => {
                 comment.votes = listVote;
                 await comment.save();
                 const commentOwner = await User.findById(comment.User_ID);
-                if(commentOwner._id != user._id){
+                if(commentOwner._id.toString() != user._id.toString()){
                     let contentNotice =  `${user.name} đã đánh giá ${star} sao cho bình luận của bạn`
                     let typeNotice = `comment/${comment._id}`;
                     let newNotice = new Notification({            

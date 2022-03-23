@@ -21,6 +21,27 @@ const document = async (req, res) => {
                     result: "change password"
                 }
             },
+            "tutor route": {
+                "/tutor/register_tutor": {
+                    function: "đăng ký tutor",
+                    method: "POST",
+                    body: "...",
+                    header: `Authorization: Bearer {token của user}`
+                },
+                "/tutor/": {
+                    function: "Lấy list tutor",
+                    method: "GET",
+                    body: "...",
+                    header: `Authorization: Bearer {token của user}`
+                }
+                ,
+                "/tutor/post": {
+                    function: "Lấy list post tutor",
+                    method: "GET",
+                    body: "...",
+                    header: `Authorization: Bearer {token của user}`
+                }
+            },
             "user route: user/": {
                 "/":
                 {

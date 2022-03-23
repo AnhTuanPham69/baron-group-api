@@ -31,9 +31,9 @@ exports.postQuestion = async (req, res) => {
         }
 
         const newPost = new Question(req.body);
-        newPost.User_ID =  user._id;
-        newPost.Avatar =  user.avatar;
-        newPost.User_Name =  user.name;
+        newPost.User_ID = user._id;
+        newPost.Avatar = user.avatar;
+        newPost.User_Name = user.name;
 
         await newPost.save();
         const id = newPost._id;
@@ -41,12 +41,13 @@ exports.postQuestion = async (req, res) => {
         // Thông báo
         const contentNotice = "Đăng bài viết thành công";
         const typeNotice = `/post/${id}`;
-        const newNotice = new Notification({            
+        const newNotice = new Notification({
             User_ID: user._id,
             Content: `${contentNotice}`,
             Date: now,
             Url: typeNotice,
-            Avt: user.avatar});
+            Avt: user.avatar
+        });
         await newNotice.save();
         user.notifications = user.notifications.concat(newNotice);
         user.posts = user.posts.concat(newPost);
@@ -105,7 +106,7 @@ exports.update = async (req, res) => {
         let typeNotice = `post/${id}`;
         const newNotice = new Notification({
             User_ID: user._id,
-            Content: `${time}: ${contentNotice}`,
+            Content: `${contentNotice}`,
             Date: now,
             Url: typeNotice,
             Avt: user.avatar
@@ -135,18 +136,18 @@ exports.delete = async (req, res) => {
         // Thông báo
         const contentNotice = "Xóa bài viết thành công";
         const typeNotice = `post:deleted`;
-        const newNotice = new Notification( {
-                    User_ID: user._id,
-                    Content: `${time}: ${contentNotice}`,
-                    Date: now,
-                    Url: typeNotice,
-                    Avt: user.avatar
+        const newNotice = new Notification({
+            User_ID: user._id,
+            Content: `${time}: ${contentNotice}`,
+            Date: now,
+            Url: typeNotice,
+            Avt: user.avatar
         });
         await newNotice.save();
         user.notifications = user.notifications.concat(newNotice);
         await user.save();
         const listPost = await Question.find().populate('likes').populate("comments");
-        return res.status(200).json({message: "Deleted", listPost: listPost});
+        return res.status(200).json({ message: "Deleted", listPost: listPost });
     } catch (err) {
         console.log(err);
         return res.status(500).json(err);
@@ -161,7 +162,7 @@ exports.likeQuestion = async (req, res) => {
     try {
         const user = req.user;
         const post = await Question.findById(id).populate('likes');
-        if(!post){
+        if (!post) {
             return res.status(404).json({ message: "Bài post này không tồn tại" });
         }
         const postOwner = await User.findById(post.User_ID);
@@ -177,7 +178,8 @@ exports.likeQuestion = async (req, res) => {
                     isLike: true
                 });
                 await newLike.save();
-                if (postOwner._id != user._id) {
+                console.log("post id: "+ (postOwner._id).toString()+ " user id: "+ user._id.toString());
+                if (postOwner._id.toString() !== user._id.toString()) {
                     // Thông báo
                     let contentNotice = `${user.name} đã like bài viết của bạn`;
                     let typeNotice = `like/${id}`;
@@ -188,10 +190,11 @@ exports.likeQuestion = async (req, res) => {
                         Url: typeNotice,
                         Avt: postOwner.avatar
                     });
+                    await newNotice.save();
 
-                     contentNotice = `Bạn đã like bài viết của ${postOwner.name}`;
-                     typeNotice = `post/${id}`;
-                     newNotice = new Notification({
+                    contentNotice = `Bạn đã like bài viết của ${postOwner.name}`;
+                    typeNotice = `post/${id}`;
+                    newNotice = new Notification({
                         User_ID: user._id,
                         Content: `${contentNotice}`,
                         Date: now,
@@ -201,11 +204,11 @@ exports.likeQuestion = async (req, res) => {
                     await newNotice.save();
                 }
 
-            } else if(like.isLike == true) {
+            } else if (like.isLike == true) {
                 like.isLike = false;
                 await like.save();
                 await Like.findByIdAndDelete(like._id);
-            }else{
+            } else {
                 like.isLike = true;
                 await like.save();
             }
@@ -226,8 +229,8 @@ exports.likeQuestion = async (req, res) => {
 exports.getLike = async (req, res) => {
     const { id } = req.params;
     try {
-       const like = await Like.find({ Post_ID: id });
-       const length = like.length;
+        const like = await Like.find({ Post_ID: id });
+        const length = like.length;
         return res.status(200).json({ message: "Quantity Like", "quantityLike": length, "listLike": like });
     } catch (err) {
         console.log(err);
@@ -237,7 +240,7 @@ exports.getLike = async (req, res) => {
 
 exports.getTotalLike = async (req, res) => {
     try {
-       const like = await Like.find();
+        const like = await Like.find();
         const length = like.length;
         return res.status(200).json({ message: "Quantity Like", "total": length, "listLike": like });
     } catch (err) {

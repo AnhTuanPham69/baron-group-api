@@ -9,6 +9,7 @@ const docRef = db.collection("users");
 const date = require('date-and-time');
 const sendEmail = require("../config/mail");
 const Notification = require("../models/notification");
+const TutorPost = require("../models/tutorPost");
 const now = new Date();
 const time = date.format(now, 'HH:mm DD/MM/YYYY');
 
@@ -137,3 +138,136 @@ exports.acceptTutor = async (req, res) => {
     }
 
 }
+
+exports.tutorPost = async (req, res) => {
+    const user = req.user;
+    try {
+        if (!user) {
+            return res.status(404).json({ message: "User does not exist" });
+        }
+        const tutor = await Tutor.findOne({uid: user._id});
+        const newPost = new TutorPost(req.body);
+        newPost.User_ID =  user._id;
+        newPost.Avatar =  user.avatar;
+        newPost.User_Name =  user.name;
+
+        await newPost.save();
+        tutor.listPost = tutor.listPost.concat(newPost);
+        await tutor.save();
+
+        const id = newPost._id;
+
+        // Thông báo
+        const contentNotice = "Đăng bài viết thành công";
+        const typeNotice = `/tutor/post/${id}`;
+        const newNotice = new Notification({            
+            User_ID: user._id,
+            Content: `${contentNotice}`,
+            Date: now,
+            Url: typeNotice,
+            Avt: user.avatar});
+        await newNotice.save();
+        user.notifications = user.notifications.concat(newNotice);
+        user.posts = user.posts.concat(newPost);
+        await user.save();
+
+        const question = await TutorPost.find();
+
+        return res.status(200).json({ message: "Getting success!", "List Post": question });
+
+    } catch (err) {
+        return res.status(500).json({ message: "Something is wrong!", err: err.messages });
+    }
+}
+
+exports.getListPost = async (req, res) => {
+    try {
+        let listpost = await TutorPost.find().populate('listPost');
+        return res.status(200).json({ message: "Getting success!", "listPost": listpost });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Something is wrong!" });
+    }
+}
+
+exports.getTutorPost = async (req, res) => {
+    const { id } = req.params;
+    try {
+        let question = await TutorPost.findById(id);
+        if (!question) return res.status(404).json({ message: "This post does not exist" });
+        return res.status(200).json({ message: "Getting success!", "data": question });
+    } catch (err) {
+        return res.status(500).json({ message: "Something is wrong!", err: err });
+    }
+}
+
+exports.updatePost = async (req, res) => {
+    const { id } = req.params;
+    const user = req.user;
+    try {
+        let post = await TutorPost.findById(id);
+        const postOwner = post.User_ID;
+        if (postOwner != req.user._id) {
+            return res.status(403).json("Not allow!");
+        }
+        if (!post)
+            return res
+                .status(404)
+                .json("This post does not exist");
+        await TutorPost.findByIdAndUpdate(id, {
+            $set: req.body,
+        }).populate('comments');
+        post = await TutorPost.findOne({ _id: id }).populate('comments');
+
+        // Thông báo
+        let contentNotice = "Cập nhật bài viết thành công";
+        let typeNotice = `post/${id}`;
+        const newNotice = new Notification({
+            User_ID: user._id,
+            Content: `${time}: ${contentNotice}`,
+            Date: now,
+            Url: typeNotice,
+            Avt: user.avatar
+        });
+        await newNotice.save();
+        user.notifications = user.notifications.concat(newNotice);
+        await user.save();
+
+        return res.status(200).json(post);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json(err);
+    }
+};
+
+exports.delete = async (req, res) => {
+    const user = req.user;
+    try {
+        const { id } = req.params;
+        const post = await TutorPost.findById(id);
+        const postOwner = post.User_ID;
+        if (postOwner != req.user._id) {
+            return res.status(403).json("Not allow!");
+        }
+        await TutorPost.deleteById(id);
+
+        // Thông báo
+        const contentNotice = "Xóa bài viết thành công";
+        const typeNotice = `post:deleted`;
+        const newNotice = new Notification( {
+                    User_ID: user._id,
+                    Content: `${time}: ${contentNotice}`,
+                    Date: now,
+                    Url: typeNotice,
+                    Avt: user.avatar
+        });
+        await newNotice.save();
+        user.notifications = user.notifications.concat(newNotice);
+        await user.save();
+        const listPost = await TutorPost.find();
+        return res.status(200).json({message: "Deleted", listPost: listPost});
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json(err);
+    }
+};

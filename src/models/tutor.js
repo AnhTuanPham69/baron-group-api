@@ -11,7 +11,14 @@ const tutorSchema = mongoose.Schema({
         ref: "User",
        
     },
+    listPost:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "TutorPost",
+    }],
     cv:{
+        type: String
+    },
+    avatar:{
         type: String
     },
     name: {
