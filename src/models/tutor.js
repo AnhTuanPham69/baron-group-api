@@ -5,8 +5,11 @@ const jwt = require('jsonwebtoken')
 
 const tutorSchema = mongoose.Schema({
     uid:{
+        
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        unique: true,
+        ref: "User",
+       
     },
     cv:{
         type: String

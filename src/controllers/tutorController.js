@@ -42,8 +42,20 @@ exports.registerTutor = async (req, res) => {
 
     const user = req.user;
     const data = req.body;
-    console.log(data);
     try {
+       const checkTutor = await Tutor.findOne({uid: user._id});
+       if(checkTutor){
+           if(checkTutor.status == "waiting"){
+            return res.status(403).json({
+                message: "Bạn đã đăng ký trở thành tutor trước đó rồi, vui lòng đợi phản hồi của quản trị viên",
+            });
+           }else{
+            return res.status(403).json({
+                message: "Mã định danh của gia sư này đã tồn tại vui lòng sử dụng tài khoản khác để đăng ký",
+            });
+           }
+
+       }
         const newTutor = new Tutor(
             req.body
         );
