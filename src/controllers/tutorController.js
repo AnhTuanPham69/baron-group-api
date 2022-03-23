@@ -4,6 +4,7 @@ const User = require("../models/user");
 //Date
 const date = require('date-and-time');
 const sendEmail = require("../config/mail");
+const Notification = require("../models/notification");
 const now = new Date();
 const time = date.format(now, 'HH:mm DD/MM/YYYY');
 
@@ -43,6 +44,7 @@ exports.registerTutor = async (req, res) => {
             req.body
         );
         newTutor.uid = user._id;
+        newTutor.avatar = user.avatar;
         newTutor.save();
         // Thông báo
         const contentNotice = "Chúng tôi đang xem xét yêu cầu trở thành gia sư của bạn";
@@ -63,6 +65,7 @@ exports.registerTutor = async (req, res) => {
             res: req.body
         });
     } catch (error) {
+        console.log(error);
         return res.status(500).json({ message: "Something is wrong!", error: error.messages });
     }
 

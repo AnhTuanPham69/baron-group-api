@@ -11,6 +11,27 @@ const tutorSchema = mongoose.Schema({
     cv:{
         type: String
     },
+    name: {
+        type: String
+    },
+    birthday: {
+        type: String
+    },
+    specialize: {
+        type: String
+    },
+    address_area: {
+        type: String
+    },
+    level: {
+        type: String
+    },
+    gender: {
+        type: String
+    },    
+    email: {
+        type: String
+    },
     phone: {
         type: String
     },
