@@ -50,6 +50,7 @@ const tutorSchema = mongoose.Schema({
     // Trạng thái xem user có vi phạm tiêu chuẩn cộng đồng và bị ban hay không. Mặc định: active
     status: {
         type: String,
+        default: 'waiting'
     },
     checked: {
         type: Boolean,

@@ -1,6 +1,10 @@
 const Tutor = require("../models/tutor");
 const User = require("../models/user");
 
+//Firebase data
+const db = require("../config/firebaseService");
+const docRef = db.collection("users");
+
 //Date
 const date = require('date-and-time');
 const sendEmail = require("../config/mail");
@@ -11,7 +15,7 @@ const time = date.format(now, 'HH:mm DD/MM/YYYY');
 exports.listCheckTutor = async (req, res) => {
 
     try {
-        const listTutor = await Tutor.find();
+        const listTutor = await Tutor.find({status: 'waiting'});
 
         return res.status(200).json({ listTutor: listTutor});
 
@@ -24,7 +28,7 @@ exports.listCheckTutor = async (req, res) => {
 exports.getListTutor = async (req, res) => {
 
     try {
-        const listTutor = await User.find({role: 'tutor'});
+        const listTutor = await Tutor.find({status: 'accepted'});
 
         return res.status(200).json({ listTutor: listTutor});
 
@@ -81,8 +85,16 @@ exports.acceptTutor = async (req, res) => {
         if(!newTutor || !tutorInfor){
             return res.status(404).json({ message: "This tutor does not exist" });
         }
+        const resFirebase = await docRef.doc(newTutor.idFirebase).set({
+            role: "tutor"
+        }, { merge: true });
+        if(!resFirebase){
+            return res.status(404).json({ message: "This tutor does not exist" });
+        }
         newTutor.role = "tutor";
         tutorInfor.status = "accepted";
+        tutorInfor.checked = true;
+        
         // Thông báo
         const contentNotice = "Bạn đã được chấp nhận trở thành gia sư";
         const typeNotice = `tutor:accept/${newTutor._id}`;
@@ -103,11 +115,12 @@ exports.acceptTutor = async (req, res) => {
         Sau khi xem xét kỹ lưỡng hồ sơ của bạn chúng tôi đã quyết định chấp nhận bạn trở thành gia sư cho ứng dụng LearnEx<br/>
         Mong rằng bạn có thể hỗ trợ và góp phần hợp tác giúp ứng dụng phát triển hơn nữa trong tương lai.<br/><br/>
         <b>Chúng Tôi Xin Chân Thành Cảm Ơn</b> <br/>`;
-        await sendEmail(newTutor.email, subject, mes);
+        await sendEmail(tutorInfor.email, subject, mes);
 
         return res.status(200).json({ message: `Accepting tutor: ${newTutor.name} is successful` });
 
     } catch (error) {
+        console.log(error);
         return res.status(500).json({ message: "Something is wrong!", error: error.messages });
     }
 
