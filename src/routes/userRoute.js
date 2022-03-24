@@ -60,6 +60,12 @@ router.get(
 );
 
 router.get(
+    '/notice/see_all',
+    tokenHandler.verifyToken,
+    notificationController.getAllNotice
+);
+
+router.get(
     '/notice/read_all',
     tokenHandler.verifyToken,
     notificationController.readAll

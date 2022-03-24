@@ -53,7 +53,7 @@ exports.postQuestion = async (req, res) => {
         user.posts = user.posts.concat(newPost);
         await user.save();
 
-        const question = await Question.find().populate('comments');
+        const question = await Question.find().populate('comments').sort('-date');;
 
         return res.status(200).json({ message: "Getting success!", "List Post": question });
 
@@ -64,7 +64,7 @@ exports.postQuestion = async (req, res) => {
 
 exports.getListQuestion = async (req, res) => {
     try {
-        let listpost = await Question.find().populate('comments').populate('likes');
+        let listpost = await Question.find().populate('comments').populate('likes').sort('-date');
         return res.status(200).json({ message: "Getting success!", "listPost": listpost });
     } catch (err) {
         console.log(err);
@@ -146,7 +146,7 @@ exports.delete = async (req, res) => {
         await newNotice.save();
         user.notifications = user.notifications.concat(newNotice);
         await user.save();
-        const listPost = await Question.find().populate('likes').populate("comments");
+        const listPost = await Question.find().populate('likes').populate("comments").sort('-date');;
         return res.status(200).json({ message: "Deleted", listPost: listPost });
     } catch (err) {
         console.log(err);
@@ -229,7 +229,7 @@ exports.likeQuestion = async (req, res) => {
 exports.getLike = async (req, res) => {
     const { id } = req.params;
     try {
-        const like = await Like.find({ Post_ID: id });
+        const like = await Like.find({ Post_ID: id }).sort('-date');;
         const length = like.length;
         return res.status(200).json({ message: "Quantity Like", "quantityLike": length, "listLike": like });
     } catch (err) {

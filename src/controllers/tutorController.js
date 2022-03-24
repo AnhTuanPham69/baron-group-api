@@ -123,7 +123,7 @@ exports.acceptTutor = async (req, res) => {
         await newTutor.save();
         await tutorInfor.save();
         //Gửi mail đăng nhập (toEmail, subject, message)
-        let subject = "Ứng Dụng LearnEx: Yêu cầu trở thành quản trị viên của bạn được chấp nhận ";
+        let subject = "Ứng Dụng LearnEx: Yêu cầu trở thành gia sư của bạn được chấp nhận ";
         let mes = `<b>Cảm ơn bạn đã quân tâm đến ứng dụng của chúng tôi</b><br/> <br/>
         Sau khi xem xét kỹ lưỡng hồ sơ của bạn chúng tôi đã quyết định chấp nhận bạn trở thành gia sư cho ứng dụng LearnEx<br/>
         Mong rằng bạn có thể hỗ trợ và góp phần hợp tác giúp ứng dụng phát triển hơn nữa trong tương lai.<br/><br/>

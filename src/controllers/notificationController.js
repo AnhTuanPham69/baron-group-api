@@ -16,11 +16,27 @@ exports.handleNotice = async (uid, content, type) => {
 exports.getNotice = async (req, res) => {
     const user = req.user;
     try {
-        let list = await Notification.find({ User_ID: user._id });
+        let list = await Notification.find({ User_ID: user._id }).limit(20).sort('-Date');
+        let unread = await Notification.find({ User_ID: user._id, Readed: false }).limit(20).sort('-Date');;
         if (!list) {
             return res.status(204).json({ message: "No notice!" });
         }
-        return res.status(200).json({ message: "Getting success!", "notificatons": list });
+        return res.status(200).json({ message: "Getting success!", "notificatons": list, unread: unread, unread_length: unread.length });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Something is wrong!" });
+    }
+}
+
+exports.getAllNotice = async (req, res) => {
+    const user = req.user;
+    try {
+        let list = await Notification.find({ User_ID: user._id }).sort('-Date');
+        let unread = await Notification.find({ User_ID: user._id, Readed: false }).sort('-Date');;
+        if (!list) {
+            return res.status(204).json({ message: "No notice!" });
+        }
+        return res.status(200).json({ message: "Getting success!", "notificatons": list, unread: unread, unread_length: unread.length });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Something is wrong!" });
