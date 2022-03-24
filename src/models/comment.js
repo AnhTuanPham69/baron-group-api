@@ -23,7 +23,8 @@ const commentShema = new mongoose.Schema({
         required: true
     },
     Date: {
-        type: Date
+        type: Date,
+        default: Date.now
     },
     Active: {
         type: String

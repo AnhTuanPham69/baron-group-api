@@ -6,29 +6,9 @@ const Question = require('../models/question');
 const Comment = require('../models/comment')
 const User = require('../models/user');
 const Vote = require('../models/vote');
-
-//import Firebase
-const db = require('../config/firebaseService');
 const Reply = require('../models/reply');
 const Notification = require('../models/notification');
-// const { handleNotice } = require('./notificationController');
 
-const docRef = db.collection('users');
-
-//Date
-const date = require('date-and-time');
-const { findOne } = require('../models/question');
-const now = new Date();
-const time = date.format(now, 'HH:mm DD/MM/YYYY');
-
-const handleNotice = async (uid, content, type) => {
-    return {
-        User_ID: uid,
-        Content: `${time}: ${content}`,
-        Date: now,
-        Url: type
-    }
-}
 exports.postComment = async (req, res) => {
     const User_ID = req.body.User_ID;
     const image = req.body.Image;
@@ -49,7 +29,6 @@ exports.postComment = async (req, res) => {
                 Avatar: user.avatar,
                 Content: req.body.Content,
                 Image: image,
-                Date: now
             });
             await newComment.save();
             let idCmt = newComment._id;
@@ -62,7 +41,6 @@ exports.postComment = async (req, res) => {
                 const newNotice = new Notification({            
                     User_ID: postOwner._id,
                     Content: `${contentNotice}`,
-                    Date: now,
                     Url: typeNotice,
                     Avt: postOwner.avatar});
                 await newNotice.save();
@@ -123,7 +101,6 @@ exports.replyComment = async (req, res) => {
             User_ID: uid,
             Comment_ID: cid,
             Content: content,
-            Date: now,
             Avatar: user.avatar,
             User_Name: user.name,
             Image: image
@@ -142,7 +119,6 @@ exports.replyComment = async (req, res) => {
             const newNotice = new Notification({
                 User_ID: commentOwner._id,
                 Content: `${contentNotice}`,
-                Date: now,
                 Url: typeNotice,
                 Avt: commentOwner.avatar
             });
@@ -152,7 +128,6 @@ exports.replyComment = async (req, res) => {
             const otherNotice = new Notification({
                 User_ID: user._id,
                 Content: `${contentNotice}`,
-                Date: now,
                 Url: typeNotice,
                 Avt: user.avatar
             });
@@ -194,7 +169,6 @@ exports.voteComment = async (req, res) => {
                 const vote = {
                     User_ID: user._id,
                     Comment_ID: comment._id,
-                    Date: now,
                     Star: star
                 }
                 const newVote = new Vote(vote);
@@ -210,7 +184,6 @@ exports.voteComment = async (req, res) => {
                     let newNotice = new Notification({            
                         User_ID: commentOwner._id,
                         Content: `${contentNotice}`,
-                        Date: now,
                         Url: typeNotice,
                         Avt: commentOwner.avatar});
                     await newNotice.save();
@@ -219,7 +192,6 @@ exports.voteComment = async (req, res) => {
                     const otherNotice = new Notification({            
                         User_ID: user._id,
                         Content: `${contentNotice}`,
-                        Date: now,
                         Url: typeNotice,
                         Avt: user.avatar});
                     await otherNotice.save();
@@ -283,7 +255,6 @@ exports.deleteVote = async (req, res) => {
                 const newNotice = new Notification({            
                     User_ID: user._id,
                     Content: `${contentNotice}`,
-                    Date: now,
                     Url: typeNotice,
                     Avt: user.avatar});
                 await newNotice.save();
