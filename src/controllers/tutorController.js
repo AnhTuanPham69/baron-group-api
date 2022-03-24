@@ -181,7 +181,7 @@ exports.tutorPost = async (req, res) => {
 
 exports.getListPost = async (req, res) => {
     try {
-        let listpost = await TutorPost.find().populate('listPost');
+        let listpost = await TutorPost.find();
         return res.status(200).json({ message: "Getting success!", "listPost": listpost });
     } catch (err) {
         console.log(err);
