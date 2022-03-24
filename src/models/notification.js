@@ -20,7 +20,8 @@ const notificationShema = new mongoose.Schema({
         default: false
     },
     Date: {
-        type: Date
+        type: Date,
+        default:Date.now
     }
 });
 

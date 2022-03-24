@@ -40,11 +40,10 @@ exports.postQuestion = async (req, res) => {
 
         // Thông báo
         const contentNotice = "Đăng bài viết thành công";
-        const typeNotice = `/post/${id}`;
+        const typeNotice = `${id}`;
         const newNotice = new Notification({
             User_ID: user._id,
             Content: `${contentNotice}`,
-            Date: now,
             Url: typeNotice,
             Avt: user.avatar
         });
@@ -182,7 +181,7 @@ exports.likeQuestion = async (req, res) => {
                 if (postOwner._id.toString() !== user._id.toString()) {
                     // Thông báo
                     let contentNotice = `${user.name} đã like bài viết của bạn`;
-                    let typeNotice = `like/${id}`;
+                    let typeNotice = `${id}`;
                     let newNotice = new Notification({
                         User_ID: post.User_ID,
                         Content: `${contentNotice}`,

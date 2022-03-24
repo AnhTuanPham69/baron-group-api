@@ -58,7 +58,7 @@ exports.postComment = async (req, res) => {
 
             if(postOwner._id.toString() !== user._id.toString()){
                 const contentNotice =  `${user.name} đã bình luận bài viết của bạn`
-                const typeNotice = `comment/${id}`;
+                const typeNotice = `${id}`;
                 const newNotice = new Notification({            
                     User_ID: postOwner._id,
                     Content: `${contentNotice}`,
@@ -138,10 +138,10 @@ exports.replyComment = async (req, res) => {
         if(commentOwner._id.toString() != user._id.toString()){
             console.log("Uer",comment)
             let contentNotice =  `${user.name} đã trả lời bình luận bài viết của bạn`
-            const typeNotice = `reply:${comment._id}`;
+            const typeNotice = `${comment._id}`;
             const newNotice = new Notification({
                 User_ID: commentOwner._id,
-                Content: `${time}: ${contentNotice}`,
+                Content: `${contentNotice}`,
                 Date: now,
                 Url: typeNotice,
                 Avt: commentOwner.avatar
@@ -151,7 +151,7 @@ exports.replyComment = async (req, res) => {
             contentNotice =  `Bạn đang theo dõi bình luận của ${comment.User_Name}`
             const otherNotice = new Notification({
                 User_ID: user._id,
-                Content: `${time}: ${contentNotice}`,
+                Content: `${contentNotice}`,
                 Date: now,
                 Url: typeNotice,
                 Avt: user.avatar
@@ -206,7 +206,7 @@ exports.voteComment = async (req, res) => {
                 const commentOwner = await User.findById(comment.User_ID);
                 if(commentOwner._id.toString() != user._id.toString()){
                     let contentNotice =  `${user.name} đã đánh giá ${star} sao cho bình luận của bạn`
-                    let typeNotice = `comment/${comment._id}`;
+                    let typeNotice = `${comment._id}`;
                     let newNotice = new Notification({            
                         User_ID: commentOwner._id,
                         Content: `${contentNotice}`,
