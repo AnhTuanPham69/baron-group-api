@@ -152,8 +152,6 @@ exports.tutorPost = async (req, res) => {
         newPost.User_Name =  user.name;
 
         await newPost.save();
-        tutor.listPost = tutor.listPost.concat(newPost);
-        await tutor.save();
 
         const id = newPost._id;
 
@@ -176,6 +174,7 @@ exports.tutorPost = async (req, res) => {
         return res.status(200).json({ message: "Getting success!", "List Post": question });
 
     } catch (err) {
+        console.log(err);
         return res.status(500).json({ message: "Something is wrong!", err: err.messages });
     }
 }

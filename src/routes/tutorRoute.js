@@ -21,4 +21,34 @@ router.get(
     tutorController.getListTutor
 );
 
+// Post Bài Giảng
+router.get(
+    '/post',
+    tutorController.getListPost
+);
+
+router.get(
+    '/post/:id',
+    tokenHandler.verifyToken,
+    tutorController.getTutorPost
+);
+
+router.post(
+    '/post/',
+    tokenHandler.isTutor,
+    tutorController.tutorPost
+);
+
+router.put(
+    '/post/:id',
+    tokenHandler.verifyToken,
+    tutorController.updatePost
+);
+
+router.delete(
+    '/post/:id',
+    tokenHandler.verifyToken,
+    tutorController.updatePost
+);
+
 module.exports = router;
