@@ -51,54 +51,64 @@ exports.overview = async (req, res) => {
 exports.analysisChart = async (req, res) => {
     try {
 
-        let dataPerMonth = [];
+        // let dataPerMonth = [];
+        let postAna = [];
+        let likeAna = [];
+        let bookAna = [];
+        let commentAna = [];
         console.log(year);
         for (let index = 1; index <= 12; index++) {
-            let start = new Date(year, (index-1), 1);
+            let start = new Date(year, (index - 1), 1);
             let end = new Date(year, index, 1);
 
-             const post = await Question.find({
+            const post = await Question.find({
                 "Date": {
                     "$gte": start,
-                   "$lte": end
-                 }
-             });
+                    "$lte": end
+                }
+            });
 
-             const book = await Book.find({
+            const book = await Book.find({
                 "date": {
                     "$gte": start,
-                   "$lte": end
-                 }
-             });
+                    "$lte": end
+                }
+            });
 
-             const like = await Like.find({
+            const like = await Like.find({
                 "Date": {
                     "$gte": start,
-                   "$lte": end
-                 }
-             });
+                    "$lte": end
+                }
+            });
 
-             const comment = await Comment.find({
+            const comment = await Comment.find({
                 "Date": {
                     "$gte": start,
-                   "$lte": end
-                 }
-             });
-
-            const data = {
-                month: index,
-                quantityPost: post.length,
-                quantityLike: like.length,
-                quantityComment: comment.length,
-                quantityBook: book.length
-            }
-            dataPerMonth = dataPerMonth.concat(data);
+                    "$lte": end
+                }
+            });
+            postAna = postAna.concat(post.length);
+            likeAna = likeAna.concat(like.length);
+            commentAna = commentAna.concat(comment.length);
+            bookAna = bookAna.concat(book.length);
+            // const data = {
+            //     month: index,
+            //     quantityPost: post.length,
+            //     quantityLike: like.length,
+            //     quantityComment: comment.length,
+            //     quantityBook: book.length
+            // }
+            // dataPerMonth = dataPerMonth.concat(data);
             // console.log(`Tháng ${index}: ${post.length}`);
             // console.log(postPerMonth);
         }
         return res.status(200).json({
+            post: postAna,
+            like: likeAna,
+            comment: commentAna,
+            book: bookAna,
             year: year,
-            analysis: dataPerMonth,
         })
     } catch (error) {
         console.log(error);

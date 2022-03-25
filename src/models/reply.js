@@ -25,7 +25,8 @@ const replyShema = new mongoose.Schema({
         type: String
     },
     Date: {
-        type: Date
+        type: Date,
+        default: Date.now
     },
     Avatar: {
         type: String

@@ -1,26 +1,11 @@
 // Post Controller 
 // Author: Tuanpham
 
-//Firebase data
-const db = require('../config/firebaseService');
-const docRef = db.collection('users');
-
 // import Model
 const Question = require('../models/question');
 const Like = require('../models/like');
 const User = require('../models/user');
-const Analysis = require('../models/analysis');
-
-
-//Date
-const date = require('date-and-time');
-const now = new Date();
-const time = date.format(now, 'HH:mm DD/MM/YYYY');
-
 const Notification = require('../models/notification');
-const { handleNotice } = require('./notificationController');
-
-
 
 
 exports.postQuestion = async (req, res) => {
@@ -106,7 +91,6 @@ exports.update = async (req, res) => {
         const newNotice = new Notification({
             User_ID: user._id,
             Content: `${contentNotice}`,
-            Date: now,
             Url: typeNotice,
             Avt: user.avatar
         });
@@ -138,7 +122,6 @@ exports.delete = async (req, res) => {
         const newNotice = new Notification({
             User_ID: user._id,
             Content: `${time}: ${contentNotice}`,
-            Date: now,
             Url: typeNotice,
             Avt: user.avatar
         });
@@ -173,7 +156,6 @@ exports.likeQuestion = async (req, res) => {
                     User_ID: user._id,
                     User_Name: user.name,
                     Post_ID: id,
-                    Date: now,
                     isLike: true
                 });
                 await newLike.save();
@@ -185,7 +167,6 @@ exports.likeQuestion = async (req, res) => {
                     let newNotice = new Notification({
                         User_ID: post.User_ID,
                         Content: `${contentNotice}`,
-                        Date: now,
                         Url: typeNotice,
                         Avt: postOwner.avatar
                     });
@@ -196,7 +177,6 @@ exports.likeQuestion = async (req, res) => {
                     newNotice = new Notification({
                         User_ID: user._id,
                         Content: `${contentNotice}`,
-                        Date: now,
                         Url: typeNotice,
                         Avt: user.avatar
                     });

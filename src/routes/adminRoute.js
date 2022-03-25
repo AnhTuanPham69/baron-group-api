@@ -25,6 +25,7 @@ router.post(
 
 router.post(
     '/change_password',
+    tokenHandler.verifyAdminToken,
     adminController.changePassword
 );
 

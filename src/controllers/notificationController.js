@@ -1,17 +1,5 @@
-const date = require('date-and-time');
 const Notification = require('../models/notification');
-const now = new Date();
-const time = date.format(now, 'HH:mm DD/MM/YYYY');
 
-
-exports.handleNotice = async (uid, content, type) => {
-    return {
-        User_ID: uid,
-        Content: `${time}: ${content}`,
-        Date: now,
-        Url: type
-    }
-}
 
 exports.getNotice = async (req, res) => {
     const user = req.user;

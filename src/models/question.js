@@ -41,6 +41,14 @@ const questionShema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    month: {
+        type: Date,
+        default: Date.get
+    },
+    year: {
+        type: Date,
+        default: Date.now
+    },
     Status: {
         type: String
     },

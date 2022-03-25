@@ -21,7 +21,8 @@ const likeShema = new mongoose.Schema({
         ref: 'Question'
     },
     Date: {
-        type: Date
+        type: Date,
+        default: Date.now
     }
 });
 

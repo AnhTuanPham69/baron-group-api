@@ -21,6 +21,11 @@ router.get(
     tutorController.getListTutor
 );
 
+router.get(
+    '/check',
+    tokenHandler.verifyAdminToken,
+    tutorController.listCheckTutor
+);
 // Post Bài Giảng
 router.get(
     '/post',

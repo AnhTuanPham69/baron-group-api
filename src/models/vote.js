@@ -26,7 +26,8 @@ const voteShema = new mongoose.Schema({
         ref: 'Comment'
     },
     Date: {
-        type: Date
+        type: Date,
+        default: Date.now
     }
 });
 

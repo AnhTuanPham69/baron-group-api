@@ -5,7 +5,7 @@ const User = require("../models/user");
 //Firebase data
 const db = require("../config/firebaseService");
 const docRef = db.collection("users");
-const now = new Date();
+
 exports.newUser = async (req, res) => {
   const { email, userName, phone } = req.body;
   try {
@@ -301,7 +301,4 @@ exports.loginFb = async (req, res) => {
         error: "Registration failed!"
       })
     });
-    // return res.status(404).json({
-    //   mes: "Login failed! User does not exist",
-    // })
 }

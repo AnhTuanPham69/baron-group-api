@@ -5,13 +5,9 @@ const User = require("../models/user");
 const db = require("../config/firebaseService");
 const docRef = db.collection("users");
 
-//Date
-const date = require('date-and-time');
 const sendEmail = require("../config/mail");
 const Notification = require("../models/notification");
 const TutorPost = require("../models/tutorPost");
-const now = new Date();
-const time = date.format(now, 'HH:mm DD/MM/YYYY');
 
 exports.listCheckTutor = async (req, res) => {
 
@@ -68,8 +64,7 @@ exports.registerTutor = async (req, res) => {
         const typeNotice = `tutor:accept/${user._id}`;
         const newNotice = new Notification({
             User_ID: user._id,
-            Content: `${time}: ${contentNotice}`,
-            Date: now,
+            Content: `${contentNotice}`,
             Avt: user.avatar,
             Url: typeNotice
         });
@@ -114,7 +109,6 @@ exports.acceptTutor = async (req, res) => {
         const newNotice = new Notification({
             User_ID: newTutor._id,
             Content: `${contentNotice}`,
-            Date: now,
             Avt: newTutor.avatar,
             Url: typeNotice
         });
@@ -147,9 +141,9 @@ exports.tutorPost = async (req, res) => {
         }
         const tutor = await Tutor.findOne({uid: user._id});
         const newPost = new TutorPost(req.body);
-        newPost.User_ID =  user._id;
-        newPost.Avatar =  user.avatar;
-        newPost.User_Name =  user.name;
+        newPost.User_ID =  tutor._id;
+        newPost.Avatar =  tutor.avatar;
+        newPost.User_Name =  tutor.name;
 
         await newPost.save();
 
@@ -161,9 +155,9 @@ exports.tutorPost = async (req, res) => {
         const newNotice = new Notification({            
             User_ID: user._id,
             Content: `${contentNotice}`,
-            Date: now,
             Url: typeNotice,
             Avt: user.avatar});
+            
         await newNotice.save();
         user.notifications = user.notifications.concat(newNotice);
         user.posts = user.posts.concat(newPost);
@@ -220,11 +214,10 @@ exports.updatePost = async (req, res) => {
 
         // Thông báo
         let contentNotice = "Cập nhật bài viết thành công";
-        let typeNotice = `post/${id}`;
+        let typeNotice = `${id}`;
         const newNotice = new Notification({
             User_ID: user._id,
-            Content: `${time}: ${contentNotice}`,
-            Date: now,
+            Content: `${contentNotice}`,
             Url: typeNotice,
             Avt: user.avatar
         });
@@ -256,7 +249,6 @@ exports.delete = async (req, res) => {
         const newNotice = new Notification( {
                     User_ID: user._id,
                     Content: `${time}: ${contentNotice}`,
-                    Date: now,
                     Url: typeNotice,
                     Avt: user.avatar
         });
