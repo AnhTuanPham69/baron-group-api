@@ -32,6 +32,9 @@ const commentShema = new mongoose.Schema({
     Avatar: {
         type: String
     },
+    Role: {
+        type: String
+    },
     Image: {
         type: String
     },

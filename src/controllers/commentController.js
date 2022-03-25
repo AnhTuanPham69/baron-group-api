@@ -26,6 +26,7 @@ exports.postComment = async (req, res) => {
                 Post_ID: question._id,
                 User_ID: user._id,
                 User_Name: user.name,
+                Role:user.role,
                 Avatar: user.avatar,
                 Content: req.body.Content,
                 Image: image,
