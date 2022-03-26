@@ -110,6 +110,9 @@ exports.delete = async (req, res) => {
     try {
         const { id } = req.params;
         const post = await Question.findById(id).populate('likes');
+        if(!post){
+            return res.status(404).json({message: "This post does not exist"})
+        }
         const postOwner = post.User_ID;
         if (postOwner != req.user._id) {
             return res.status(403).json("Not allow!");
@@ -121,7 +124,7 @@ exports.delete = async (req, res) => {
         const typeNotice = `post:deleted`;
         const newNotice = new Notification({
             User_ID: user._id,
-            Content: `${time}: ${contentNotice}`,
+            Content: `${contentNotice}`,
             Url: typeNotice,
             Avt: user.avatar
         });
@@ -132,7 +135,7 @@ exports.delete = async (req, res) => {
         return res.status(200).json({ message: "Deleted", listPost: listPost });
     } catch (err) {
         console.log(err);
-        return res.status(500).json(err);
+        return res.status(500).json({error: err.messages});
     }
 };
 
