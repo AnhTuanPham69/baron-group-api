@@ -5,7 +5,6 @@ const Admin = require('../models/admin');
 const tokenDecode = (req) => {
     const bearerHeader = req.headers['authorization'];
     if (bearerHeader) {
-        console.log("token: "+ bearerHeader);
         const bearer = bearerHeader.split(' ')[1];
         try {
             const tokenDecoded = jsonwebtoken.verify(

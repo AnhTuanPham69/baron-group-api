@@ -124,7 +124,56 @@ exports.acceptTutor = async (req, res) => {
         <b>Chúng Tôi Xin Chân Thành Cảm Ơn</b> <br/>`;
         await sendEmail(tutorInfor.email, subject, mes);
 
-        return res.status(200).json({ message: `Accepting tutor: ${newTutor.name} is successful` });
+        return res.status(200).json({ response: "success",message: `Accepting tutor: ${newTutor.name} is successful` });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something is wrong!", error: error.messages });
+    }
+
+}
+
+exports.refuseTutor = async (req, res) => {
+
+    const uid = req.params.uid;
+    try {
+        const newTutor = await User.findById(uid);
+        const tutorInfor = await Tutor.findOne({uid: uid});
+        if(!newTutor || !tutorInfor){
+            return res.status(404).json({ message: "This tutor does not exist" });
+        }
+        // const resFirebase = await docRef.doc(newTutor.idFirebase).set({
+        //     role: "tutor"
+        // }, { merge: true });
+        // if(!resFirebase){
+        //     return res.status(404).json({ message: "This tutor does not exist" });
+        // }
+        // newTutor.role = "tutor";
+        tutorInfor.status = "refused";
+        tutorInfor.checked = true;
+        
+        // Thông báo
+        const contentNotice = "Yêu cầu trở thành gia sư của bạn bị từ chối";
+        const typeNotice = `tutor/refuse/${newTutor._id}`;
+        const newNotice = new Notification({
+            User_ID: newTutor._id,
+            Content: `${contentNotice}`,
+            Avt: newTutor.avatar,
+            Url: typeNotice
+        });
+        await newNotice.save();
+        newTutor.notifications = newTutor.notifications.concat(newNotice);
+        await newTutor.save();
+        await tutorInfor.save();
+        //Gửi mail đăng nhập (toEmail, subject, message)
+        let subject = "Ứng Dụng LearnEx: Yêu cầu trở thành gia sư của bạn bị từ chối";
+        let mes = `<b>Cảm ơn bạn đã quân tâm đến ứng dụng của chúng tôi</b><br/> <br/>
+        Sau khi xem xét kỹ lưỡng hồ sơ của bạn chúng tôi rất tiết thông báo rằng bạn chưa phù hợp trở thành gia sư cho ứng dụng LearnEx<br/>
+        Mong rằng bạn có thể hỗ trợ và góp phần hợp tác giúp ứng dụng phát triển hơn nữa trong tương lai.<br/><br/>
+        <b>Chúng Tôi Xin Chân Thành Cảm Ơn</b> <br/>`;
+        await sendEmail(tutorInfor.email, subject, mes);
+
+        return res.status(200).json({ response: "refused", message: `${newTutor.name} bị từ chối trở thành gia sư` });
 
     } catch (error) {
         console.log(error);

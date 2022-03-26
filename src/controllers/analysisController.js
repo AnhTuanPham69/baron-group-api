@@ -92,16 +92,6 @@ exports.analysisChart = async (req, res) => {
             likeAna = likeAna.concat(like.length);
             commentAna = commentAna.concat(comment.length);
             bookAna = bookAna.concat(book.length);
-            // const data = {
-            //     month: index,
-            //     quantityPost: post.length,
-            //     quantityLike: like.length,
-            //     quantityComment: comment.length,
-            //     quantityBook: book.length
-            // }
-            // dataPerMonth = dataPerMonth.concat(data);
-            // console.log(`Tháng ${index}: ${post.length}`);
-            // console.log(postPerMonth);
         }
         return res.status(200).json({
             post: postAna,

@@ -250,6 +250,7 @@ exports.deleteVote = async (req, res) => {
 
         await Vote.deleteOne(findVote._id);
 
+        
                 // Thông báo
                 const contentNotice = "Xóa đánh giá thành công";
                 const typeNotice = `post/${comment.Post_ID}/comment/${comment._id}`;

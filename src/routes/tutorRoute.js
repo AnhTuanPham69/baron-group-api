@@ -10,6 +10,12 @@ router.post(
 );
 
 router.post(
+    '/refuse/:uid',
+    tokenHandler.verifyAdminToken,
+    tutorController.refuseTutor
+);
+
+router.post(
     '/register_tutor',
     tokenHandler.verifyToken,
     tutorController.registerTutor
