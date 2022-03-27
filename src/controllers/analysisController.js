@@ -51,10 +51,31 @@ exports.overview = async (req, res) => {
 
 exports.getRank = async (req, res) => {
     try {
-        const rank = await Rank.find().sort({point: -1});
-        return res.status(200).json({
-           rank: rank
-        })
+        const rank = await Rank.find().sort({ point: -1 });
+        // rank.map(async (data) => {
+        //     const user = await User.findById(data.uid);
+        //     const in4 = {
+        //         rank: data,
+        //         name: user.name,
+        //         avt: user.avatar
+        //     }
+        //     ref.push(in4);
+        // })
+        if(rank){
+            // const ref = [];
+            // rank.forEach( async (element) => {
+            //     const user = await User.findById(element.uid);
+            //     const in4 = {
+            //         rank: element,
+            //         name: user.name,
+            //         avt: user.avatar
+            //     }
+            //     ref.push(in4);  
+            // })
+            // console.log(ref);
+            return res.status(200).json({rank})
+        }
+        return res.status(404).json({message: "Hiện chưa có xếp hạng"})
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "something is wrong!", error: error.messages });

@@ -164,8 +164,7 @@ exports.likeQuestion = async (req, res) => {
                 });
                 await newLike.save();
                 if(postOwner.idRank == false){
-                    console.log("Chưa có id rank");
-                   let newRank = await new Rank({uid: postOwner._id});
+                   let newRank = await new Rank({uid: postOwner._id, username: postOwner.name, avt: postOwner.avatar});
                    postOwner.idRank = newRank._id.toString();
                   await newRank.save();
                   await postOwner.save();
@@ -180,7 +179,7 @@ exports.likeQuestion = async (req, res) => {
                 if (postOwner._id.toString() !== user._id.toString()) {
                     // Thông báo
                     let contentNotice = `${user.name} đã like bài viết của bạn`;
-                    let typeNotice = `${id}`;
+                    let typeNotice = `${post._id}`;
                     let newNotice = new Notification({
                         User_ID: post.User_ID,
                         Content: `${contentNotice}`,

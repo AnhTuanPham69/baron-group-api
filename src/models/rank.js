@@ -17,6 +17,12 @@ const rankShema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    username:{
+        type: String
+    },
+    avt:{
+        type: String
+    },
     star:{
         type: Number,
         default: 0
