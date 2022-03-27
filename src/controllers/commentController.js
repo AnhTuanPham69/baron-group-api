@@ -8,6 +8,7 @@ const User = require('../models/user');
 const Vote = require('../models/vote');
 const Reply = require('../models/reply');
 const Notification = require('../models/notification');
+const Rank = require('../models/rank');
 
 exports.postComment = async (req, res) => {
     const User_ID = req.body.User_ID;
@@ -175,10 +176,33 @@ exports.voteComment = async (req, res) => {
                 const newVote = new Vote(vote);
                 await newVote.save();
                 const listVote = await Vote.findOne({ Comment_ID: comment._id });
-
                 comment.votes = listVote;
                 await comment.save();
                 const commentOwner = await User.findById(comment.User_ID);
+
+                // Xếp hạng
+                if(commentOwner.idRank == false){
+                    console.log("Chưa có id rank");
+                   let newRank = await new Rank({uid: commentOwner._id});
+                   commentOwner.idRank = newRank._id.toString();
+
+                   await commentOwner.save();
+                   await newRank.save();
+                }
+                const rank = await Rank.findOne({uid: comment.User_ID});
+                if(rank){
+                    rank.point = rank.point +=star;
+                    rank.star = rank.star +=star;
+                    rank.votes = rank.votes +=1;
+                    rank.avgStar = (rank.star/rank.votes)
+                    await rank.save();
+                }
+
+                // await Rank.findOneAndUpdate({ uid: comment.User_ID }, { $set: {
+                //     point: point+=star,
+                //     stars: stars+=star,
+                //     total: total+1
+                // }}, { new: true, upsert: true });
                 if(commentOwner._id.toString() != user._id.toString()){
                     let contentNotice =  `${user.name} đã đánh giá ${star} sao cho bình luận của bạn`
                     let typeNotice = `${comment._id}`;
@@ -201,7 +225,7 @@ exports.voteComment = async (req, res) => {
                     return res.status(403).json({ message: "Bạn không thể đánh giá bình luận của chính mình"});
                 }
                 const commentVoted = await Comment.findById(comment._id).populate('votes');
-                return res.status(200).json({ message: "Voting success!", "Comment": commentVoted });
+                return res.status(200).json({ message: "Voting success!", "Comment": commentVoted, rank: rank });
 
             } else {
                 return res.status(403).json({ message: "Bạn đã vote trước đó rồi, nếu muốn vote lại vui lòng gỡ bình chọn cũ"}

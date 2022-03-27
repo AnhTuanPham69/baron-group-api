@@ -13,12 +13,19 @@ const userSchema = mongoose.Schema({
         required: true,
         trim: true
     },
-    posts:[
+    posts: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Question"
         }
     ],
+    idRank:
+    {
+        type: String,
+        ref: "Rank",
+        default: false
+    }
+    ,
     role: {
         type: String,
         required: true,
@@ -50,7 +57,7 @@ const userSchema = mongoose.Schema({
     address: {
         type: String
     },
-    register_date:{
+    register_date: {
         type: String
     },
     notifications: [
@@ -76,18 +83,18 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
-userSchema.methods.generateAuthToken = async function() {
+userSchema.methods.generateAuthToken = async function () {
     // Generate an auth token for the user
     const user = this
-    const token = jwt.sign({_id: user._id}, process.env.JWT_KEY)
-    user.tokens = user.tokens.concat({token})
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_KEY)
+    user.tokens = user.tokens.concat({ token })
     await user.save()
     return token
 }
 
 userSchema.statics.findByCredentials = async (userName, password) => {
     // Search for a user by email and password.
-    const user = await User.findOne({ userName } )
+    const user = await User.findOne({ userName })
     if (!user) {
         throw new Error({ error: 'Invalid login credentials' })
     }

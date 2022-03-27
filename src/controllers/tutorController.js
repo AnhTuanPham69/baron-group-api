@@ -105,7 +105,7 @@ exports.acceptTutor = async (req, res) => {
         
         // Thông báo
         const contentNotice = "Bạn đã được chấp nhận trở thành gia sư";
-        const typeNotice = `tutor:accept/${newTutor._id}`;
+        const typeNotice = `tutor/accept/${newTutor._id}`;
         const newNotice = new Notification({
             User_ID: newTutor._id,
             Content: `${contentNotice}`,

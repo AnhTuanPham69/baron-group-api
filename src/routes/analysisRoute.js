@@ -1,5 +1,5 @@
 const express = require('express');
-const { overview, analysisChart } = require('../controllers/analysisController');
+const { overview, analysisChart, getRank } = require('../controllers/analysisController');
 const { verifyAdminToken } = require('../middleware/tokenHander');
 const router = express.Router();
 
@@ -12,4 +12,9 @@ router.get('/chart',
 verifyAdminToken,
 analysisChart
 );
+
+router.get('/rank',
+getRank
+);
+
 module.exports = router;

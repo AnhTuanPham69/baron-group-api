@@ -10,6 +10,11 @@ router.get(
     tokenHandler.verifyAdminToken,
     userController.listUserFirebase
 );
+
+// router.get(
+//     '/rank',
+//     userController.getRank
+// );
 //tokenHandler.verifyAdminToken,
 router.get(
     '/listUser',

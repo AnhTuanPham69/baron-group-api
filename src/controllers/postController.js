@@ -6,6 +6,7 @@ const Question = require('../models/question');
 const Like = require('../models/like');
 const User = require('../models/user');
 const Notification = require('../models/notification');
+const Rank = require('../models/rank');
 
 
 exports.postQuestion = async (req, res) => {
@@ -153,7 +154,7 @@ exports.likeQuestion = async (req, res) => {
         const postOwner = await User.findById(post.User_ID);
         if (user) {
             const like = await Like.findOne({ User_ID: user._id, Post_ID: post._id })
-
+            
             if (!like) {
                 let newLike = new Like({
                     User_ID: user._id,
@@ -162,7 +163,20 @@ exports.likeQuestion = async (req, res) => {
                     isLike: true
                 });
                 await newLike.save();
-                console.log("post id: "+ (postOwner._id).toString()+ " user id: "+ user._id.toString());
+                if(postOwner.idRank == false){
+                    console.log("Chưa có id rank");
+                   let newRank = await new Rank({uid: postOwner._id});
+                   postOwner.idRank = newRank._id.toString();
+                  await newRank.save();
+                  await postOwner.save();
+                }
+                const rank = await Rank.findOne({uid: postOwner._id});
+                if(rank){
+                    console.log("cộng điểm");
+                    rank.point = rank.point + 1;
+                    await rank.save();
+                }
+
                 if (postOwner._id.toString() !== user._id.toString()) {
                     // Thông báo
                     let contentNotice = `${user.name} đã like bài viết của bạn`;
@@ -190,6 +204,12 @@ exports.likeQuestion = async (req, res) => {
                 like.isLike = false;
                 await like.save();
                 await Like.findByIdAndDelete(like._id);
+                const rank = await Rank.findOne({uid: post.User_ID});
+                if(rank){
+                    console.log("trừ điểm");
+                    rank.point = rank.point - 1;
+                    await rank.save();
+                }
             } else {
                 like.isLike = true;
                 await like.save();

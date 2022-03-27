@@ -4,6 +4,8 @@ const User = require("../models/user");
 
 //Firebase data
 const db = require("../config/firebaseService");
+const Tutor = require("../models/tutor");
+const Vote = require("../models/vote");
 const docRef = db.collection("users");
 
 exports.newUser = async (req, res) => {
@@ -92,7 +94,7 @@ exports.getAll = async (req, res) => {
       });
   } catch (err) {
     console.log(err);
-    res.status(500).json(err);
+    res.status(500).json(err.messages);
   }
 };
 
@@ -302,3 +304,48 @@ exports.loginFb = async (req, res) => {
       })
     });
 }
+
+// exports.getRank = async (req, res) => {
+//   try {
+//     const listUser = await User.find();
+//     if (!listUser) {
+//       return res
+//         .status(404)
+//         .json({
+//           message: "Not found list User"
+//         });
+//     }
+//     const rank = []
+//     listUser.map(async (data, index)=>{
+//         const vote = await Vote.find({User_ID: data._id});
+//         console.log(vote);
+//         if(vote){
+//           let count = vote.length;
+//           let star = 0;
+//           vote.map((data, index)=>{
+//               console.log("[",data.star,"]");
+//               star += data.star
+//           })
+//           const element = {
+//             uid: data._id,
+//             username: data.name,
+//             totalVote: count,
+//             star: (star/count)
+//           }
+          
+//           rank.push(element);
+//         }
+       
+//     })
+//     console.log("rank: ", rank);
+//     return res
+//       .status(200)
+//       .json({
+//         message: "Getting rank is successful!",
+//         rank: rank,
+//       });
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json(err.messages);
+//   }
+// };

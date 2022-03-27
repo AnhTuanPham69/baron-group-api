@@ -2,6 +2,7 @@ const Book = require("../models/book");
 const Comment = require("../models/comment");
 const Like = require("../models/like");
 const Question = require("../models/question");
+const Rank = require("../models/rank");
 const Tutor = require("../models/tutor");
 const User = require("../models/user")
 
@@ -40,6 +41,19 @@ exports.overview = async (req, res) => {
                 length: bookLength.length,
                 data: bookLength
             },
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "something is wrong!", error: error.messages });
+    }
+
+}
+
+exports.getRank = async (req, res) => {
+    try {
+        const rank = await Rank.find().sort({point: -1});
+        return res.status(200).json({
+           rank: rank
         })
     } catch (error) {
         console.log(error);
