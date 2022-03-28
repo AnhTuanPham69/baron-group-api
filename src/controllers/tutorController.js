@@ -193,7 +193,7 @@ exports.tutorPost = async (req, res) => {
 
         // Thông báo
         const contentNotice = "Đăng bài viết thành công";
-        const typeNotice = `/tutor/post/${id}`;
+        const typeNotice = `${id}`;
         const newNotice = new Notification({            
             User_ID: user._id,
             Content: `${contentNotice}`,
