@@ -6,6 +6,7 @@ const User = require("../models/user");
 const db = require("../config/firebaseService");
 const Tutor = require("../models/tutor");
 const Vote = require("../models/vote");
+const sendEmail = require("../config/mail");
 const docRef = db.collection("users");
 
 exports.newUser = async (req, res) => {
@@ -136,10 +137,50 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const { id } = req.params;
-    await UserVaccine.deleteMany({ user: id });
-    await UserPlace.deleteMany({ user: id });
+    const user = await User.findById(id);
     await User.findByIdAndDelete(id);
-    return res.status(200).json("Deleted");
+    return res.status(200).json(`Deleted ${user.name}`);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+};
+
+exports.ban = async (req, res) => {
+  const reason = req.body.reason;
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    if(user){
+    user.status = "banned";
+    await user.save();
+            //Gửi mail đăng nhập (toEmail, subject, message)
+            let subject = "Thư cảnh báo từ ứng dụng learnEx";
+            let mes = `<b>Chúng tôi rất tiếc phải thông báo rằng bạn bắt buộc bị ngưng sử dụng dịch vụ từ ứng dụng chúng tôi</b>
+            </br>
+            <b>Lí do: </b> ${reason} </br>
+            Nếu điều này là do hiểu lầm từ hệ thống hoặc có thắc mắc vui lòng liên hệ hotline <b>07991 xxxxx</b> </br>
+            để được hỗ trợ
+              `;
+            await sendEmail(user.email, subject, mes).catch(()=>{
+              return res.status(503).json("503: can't send mail");
+            });
+    
+    return res.status(200).json(`Banned ${user.name}`);
+          }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+};
+
+exports.active = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    user.status = "active"
+    await user.save();
+    return res.status(200).json("Successful!");
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);
@@ -304,48 +345,3 @@ exports.loginFb = async (req, res) => {
       })
     });
 }
-
-// exports.getRank = async (req, res) => {
-//   try {
-//     const listUser = await User.find();
-//     if (!listUser) {
-//       return res
-//         .status(404)
-//         .json({
-//           message: "Not found list User"
-//         });
-//     }
-//     const rank = []
-//     listUser.map(async (data, index)=>{
-//         const vote = await Vote.find({User_ID: data._id});
-//         console.log(vote);
-//         if(vote){
-//           let count = vote.length;
-//           let star = 0;
-//           vote.map((data, index)=>{
-//               console.log("[",data.star,"]");
-//               star += data.star
-//           })
-//           const element = {
-//             uid: data._id,
-//             username: data.name,
-//             totalVote: count,
-//             star: (star/count)
-//           }
-          
-//           rank.push(element);
-//         }
-       
-//     })
-//     console.log("rank: ", rank);
-//     return res
-//       .status(200)
-//       .json({
-//         message: "Getting rank is successful!",
-//         rank: rank,
-//       });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json(err.messages);
-//   }
-// };

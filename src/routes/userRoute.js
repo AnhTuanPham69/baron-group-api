@@ -57,6 +57,18 @@ router.delete(
     userController.delete
 );
 
+router.post(
+    '/active/:id',
+    tokenHandler.verifyAdminToken,
+    userController.active
+);
+
+router.post(
+    '/ban/:id',
+    tokenHandler.verifyAdminToken,
+    userController.ban
+);
+
 // notification
 router.get(
     '/notice',
