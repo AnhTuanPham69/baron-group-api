@@ -25,7 +25,7 @@ exports.listCheckTutor = async (req, res) => {
 exports.getListTutor = async (req, res) => {
 
     try {
-        const listTutor = await Tutor.find({status: 'accepted'});
+        const listTutor = await Tutor.find();
 
         return res.status(200).json({ listTutor: listTutor});
 
@@ -142,13 +142,6 @@ exports.refuseTutor = async (req, res) => {
         if(!newTutor || !tutorInfor){
             return res.status(404).json({ message: "This tutor does not exist" });
         }
-        // const resFirebase = await docRef.doc(newTutor.idFirebase).set({
-        //     role: "tutor"
-        // }, { merge: true });
-        // if(!resFirebase){
-        //     return res.status(404).json({ message: "This tutor does not exist" });
-        // }
-        // newTutor.role = "tutor";
         tutorInfor.status = "refused";
         tutorInfor.checked = true;
         
