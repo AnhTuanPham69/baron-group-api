@@ -86,7 +86,7 @@ exports.forgotPassword = async (req, res) => {
     try {
         let user = await Admin.findOne({ email: email });
 
-        if (!user) return res.status(403).json('Email is incorrect');
+        if (!user) return res.status(203).json({status: 403, message: 'Email is incorrect'});
 
         const newPass = Math.random().toString(36).substring(2, 7);
 
@@ -95,9 +95,10 @@ exports.forgotPassword = async (req, res) => {
         const token = jwt.sign({ id: user._id }, process.env.JWT_KEY)
         user.tokens = user.tokens.concat({ token })
         await user.save();
+
         //Gửi mail đăng nhập (toEmail, subject, message)
         let subject = "Mail thay đổi mật khẩu";
-        let mes = `<p> Mật khẩu mới của quý khách là: <b>${newPass}</b></p>
+        let mes = `<p> Mật khẩu mới của quý khách là: <b>${newPass}</b> </br> Tài khoản: ${user.username} </p>
         <hr/>
         <b>Yêu cầu này được thực hiện trên thiết bị: ${os.hostname()}</b>
                   <br/>Vào lúc: ${time} `;
@@ -115,23 +116,25 @@ exports.forgotPassword = async (req, res) => {
 
 // Change Password
 exports.changePassword = async (req, res) => {
-    const email = req.body.email;
+    const username = req.body.username;
     const oldPw = req.body.oldPw;
     const newPw = req.body.newPw;
     try {
-        let user = await Admin.findOne({ email: email });
+        let user = await Admin.findOne({ username: username });
 
-        if (!user) return res.status(403).json('Email is incorrect');
+        if (!user) return res.status(200).json({status: 404, message: 'username is incorrect'});
 
         const isPasswordMatch = await bcrypt.compare(oldPw, user.password)
         if (!isPasswordMatch) {
-            return res.status(401).json({
+            return res.status(200).json({
+                status: 401,
                 message: "Password is not match"
             });
         }
 
         user.password = newPw;
         await user.save();
+
         //Gửi mail đăng nhập (toEmail, subject, message)
         let subject = "Mail thay đổi mật khẩu";
         let mes = `<p><b>Thay đổi mật khẩu thành công</b></p>
