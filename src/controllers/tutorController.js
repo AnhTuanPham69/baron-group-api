@@ -188,20 +188,6 @@ exports.tutorPost = async (req, res) => {
         newPost.User_Name =  tutor.name;
 
         await newPost.save();
-
-        const id = newPost._id;
-
-        // Thông báo
-        const contentNotice = "Đăng bài viết thành công";
-        const typeNotice = `${id}`;
-        const newNotice = new Notification({            
-            User_ID: user._id,
-            Content: `${contentNotice}`,
-            Url: typeNotice,
-            Avt: user.avatar});
-            
-        await newNotice.save();
-        user.notifications = user.notifications.concat(newNotice);
         user.posts = user.posts.concat(newPost);
         await user.save();
 
