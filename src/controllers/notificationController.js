@@ -4,8 +4,8 @@ const Notification = require('../models/notification');
 exports.getNotice = async (req, res) => {
     const user = req.user;
     try {
-        let list = await Notification.find({ User_ID: user._id }).limit(20);
-        let unread = await Notification.find({ User_ID: user._id, Readed: false }).limit(20);
+        let list = await Notification.find({ User_ID: user._id })
+        let unread = await Notification.find({ User_ID: user._id, Readed: false })
         if (!list) {
             return res.status(204).json({ message: "No notice!" });
         }
