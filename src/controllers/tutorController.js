@@ -25,6 +25,20 @@ exports.listCheckTutor = async (req, res) => {
 exports.getListTutor = async (req, res) => {
 
     try {
+        const listTutor = await Tutor.find({status: 'accepted'});
+
+        return res.status(200).json({ listTutor: listTutor});
+
+    } catch (error) {
+        return res.status(500).json({ message: "Something is wrong!", error: error.messages });
+    }
+
+}
+
+
+exports.getAllTutor = async (req, res) => {
+
+    try {
         const listTutor = await Tutor.find();
 
         return res.status(200).json({ listTutor: listTutor});

@@ -28,6 +28,12 @@ router.get(
 );
 
 router.get(
+    '/alltutor',
+    tokenHandler.verifyToken,
+    tutorController.getAllTutor
+);
+
+router.get(
     '/check',
     tokenHandler.verifyAdminToken,
     tutorController.listCheckTutor
